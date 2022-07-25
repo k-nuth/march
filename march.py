@@ -7,7 +7,16 @@
 # https://docs.microsoft.com/es-es/cpp/intrinsics/cpuid-cpuidex?view=msvc-170
 # https://en.wikipedia.org/wiki/CPUID
 # https://www.felixcloutier.com/x86/
+
+# Intel
 # file:///Users/fernando/Downloads/325383-sdm-vol-2abcd%20(1).pdf
+
+
+# AMD64 Architecture Programmer’s Manual Volume 2: System Programming
+#   https://www.amd.com/system/files/TechDocs/24593.pdf
+# AMD64 Architecture Programmer’s Manual Volume 3: General-Purpose and System Instructions
+#   https://www.amd.com/system/files/TechDocs/25481.pdf
+
 
 # https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set#cite_note-fam16hsheet-4
 # https://en.wikipedia.org/wiki/SSE4#POPCNT_and_LZCNT
@@ -16,10 +25,7 @@
 # https://gitlab.com/x86-psABIs/x86-64-ABI
 # https://developers.redhat.com/blog/2021/01/05/building-red-hat-enterprise-linux-9-for-the-x86-64-v2-microarchitecture-level#background_of_the_x86_64_microarchitecture_levels
 # https://lists.llvm.org/pipermail/llvm-dev/2020-July/143289.html
-# AMD64 Architecture Programmer’s Manual Volume 2: System Programming
-#   https://www.amd.com/system/files/TechDocs/24593.pdf
-# AMD64 Architecture Programmer’s Manual Volume 3: General-Purpose and System Instructions
-#   https://www.amd.com/system/files/TechDocs/25481.pdf
+
 
 
 
