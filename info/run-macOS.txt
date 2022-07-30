@@ -1,0 +1,15 @@
+python3 march.py
+
+your CPU march id:  w27Dz5V3iy51qP4ArToQ
+your CPU extensions:  ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'SGX', 'AES', 'XGETBV_ECX1', 'SGX_LC', 'INVPCID']
+
+Extensions not supported by your compiler:  ['XGETBV_ECX1', 'SGX_LC', 'INVPCID']
+
+your compiler march is a superset of level3 exts:  True
+your compiler march id:  3bXSaBmtnZFdifSL
+your compiler extensions:  ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'SGX', 'AES']
+compiler flags for your extensions:  -m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave -mpclmul -mfsgsbase -mrdrnd -mrdseed -madx -mprfchw -mclflushopt -mxsaveopt -mxsavec -mxsaves -msgx -maes
+
+Level3 march id:  ZLm9Pjh
+Level3 extensions:  ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE']
+Level3 compiler flags:  -m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave

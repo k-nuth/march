@@ -1,0 +1,15 @@
+python march.py
+
+your CPU march id:  2Jcyo5NtRcALhaB97uK9C
+your CPU extensions:  ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'SSE4A', 'PKU', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'CLWB', 'RDPID', 'VPCLMULQDQ', 'WBNOINVD', 'MWAITX', 'CLZERO', 'INVLPGB_TLBSYNC', 'CET_SS', 'AES', 'VAES', 'SHA', 'MMXEXT', 'XGETBV_ECX1', 'UMIP', 'MCOMMIT', 'RDPRU', 'INVPCID', 'SEV_SNP']
+
+Extensions not supported by your compiler:  ['INVLPGB_TLBSYNC', 'MMXEXT', 'XGETBV_ECX1', 'UMIP', 'MCOMMIT', 'RDPRU', 'INVPCID', 'SEV_SNP']
+
+your compiler march is a superset of level3 exts:  True
+your compiler march id:  gjQ2e7P423v5Vfu9
+your compiler extensions:  ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'SSE4A', 'PKU', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'CLWB', 'RDPID', 'VPCLMULQDQ', 'WBNOINVD', 'MWAITX', 'CLZERO', 'CET_SS', 'AES', 'VAES', 'SHA']
+compiler flags for your extensions:  -m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave -msse4a -mpku -mpclmul -mfsgsbase -mrdrnd -mrdseed -madx -mprfchw -mclflushopt -mxsaveopt -mxsavec -mxsaves -mclwb -mrdpid -mvpclmulqdq -mwbnoinvd -mmwaitx -mclzero -mshstk -maes -mvaes -msha
+
+Level3 march id:  ZLm9Pjh
+Level3 extensions:  ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE']
+Level3 compiler flags:  -m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave
