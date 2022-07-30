@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 #
 # Copyright (c) 2019-2022 Knuth Project
 #
@@ -9,9 +8,9 @@ from setuptools.command.install import install
 import subprocess
 import os
 
-__title__ = "march"
+__title__ = "microarch"
 __summary__ = "Knuth Microarchitecture Management (CPUID)"
-__uri__ = "https://github.com/k-nuth/march"
+__uri__ = "https://github.com/k-nuth/microarch"
 __version__ = "0.0.1"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
@@ -73,7 +72,7 @@ setup(
     # What does your project relate to?
     keywords='knuth kth crypto bitcoin btc bch cash build tool',
 
-    py_modules=["march"],
+    py_modules=["microarch"],
 
     install_requires=install_requires,
     # setup_requires=setup_requires,

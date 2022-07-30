@@ -1,40 +1,13 @@
-#TODO(fernando): marchs supported by: apple-clang 10.0 and greater
-#                                     clang7, clang8 and clang9
-#                                     gcc8, gcc9
+#!/usr/bin/env python
 
-
-# https://github.com/klauspost/cpuid/blob/master/cpuid.go
-# https://docs.microsoft.com/es-es/cpp/intrinsics/cpuid-cpuidex?view=msvc-170
-# https://en.wikipedia.org/wiki/CPUID
-# https://www.felixcloutier.com/x86/
-
-# Intel
-# https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf
-
-# AMD64 Architecture Programmer’s Manual Volume 2: System Programming
-#   https://www.amd.com/system/files/TechDocs/24593.pdf
-# AMD64 Architecture Programmer’s Manual Volume 3: General-Purpose and System Instructions
-#   https://www.amd.com/system/files/TechDocs/24594.pdf
-# AMD CPUID Specification
-#   https://www.amd.com/system/files/TechDocs/25481.pdf
-
-
-
-# https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set#cite_note-fam16hsheet-4
-# https://en.wikipedia.org/wiki/SSE4#POPCNT_and_LZCNT
-# https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/x86-Options.html#x86-Options
-# https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels
-# https://gitlab.com/x86-psABIs/x86-64-ABI
-# https://developers.redhat.com/blog/2021/01/05/building-red-hat-enterprise-linux-9-for-the-x86-64-v2-microarchitecture-level#background_of_the_x86_64_microarchitecture_levels
-# https://lists.llvm.org/pipermail/llvm-dev/2020-July/143289.html
-
-
+#
+# Copyright (c) 2019-2022 Knuth Project
+#
 
 from enum import Enum
 import cpuid
 import importlib
 from collections import deque
-# from bitstring import BitArray
 
 KTH_MARCH_BUILD_VERSION = 1
 KTH_MARCH_BUILD_VERSION_BYTES = KTH_MARCH_BUILD_VERSION.to_bytes(2, byteorder='big')
@@ -95,36 +68,6 @@ def base58_flex_decode(enc, chrset=base58_charset):
 
 # --------------------------------------------
 
-# https://gcc.gnu.org/onlinedocs/gcc-3.1.1/gcc/i386-and-x86-64-Options.html#i386%20and%20x86-64%20Options
-# https://gcc.gnu.org/onlinedocs/gcc-3.2.3/gcc/i386-and-x86-64-Options.html#i386%20and%20x86-64%20Options
-# https://gcc.gnu.org/onlinedocs/gcc-3.3.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-3.4.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-
-# https://gcc.gnu.org/onlinedocs/gcc-4.0.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.2.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.3.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.4.7/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.5.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.6.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.7.4/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
-# https://gcc.gnu.org/onlinedocs/gcc-4.9.4/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
-
-# https://gcc.gnu.org/onlinedocs/gcc-5.5.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-6.5.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-7.5.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-8.5.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-9.5.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-10.4.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-11.3.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/x86-Options.html#x86-Options
-
-# ------------------------------------------------------------------------------------------------
-
-# https://github.com/pixelb/scripts/blob/master/scripts/gcccpuopt
-
-
 def adjust_compiler_name(os, compiler):
     if os == "Windows" and compiler == "gcc":
         return "mingw"
@@ -133,85 +76,10 @@ def adjust_compiler_name(os, compiler):
 
     return compiler
 
-def march_conan_manip(conanobj):
-    if conanobj.settings.arch != "x86_64":
-        return (None, None)
-
-    march_from = 'taken from cpuid'
-    march_id = get_architecture_id()
-
-    if conanobj.options.get_safe("march_id") is not None:
-        if conanobj.options.march_id == "_DUMMY_":
-            conanobj.options.march_id = march_id
-        else:
-            march_id = conanobj.options.march_id
-            march_from = 'user defined'
-            #TODO(fernando): check for march_id errors
-
-    conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from, march_id))
-
-    return (march_id)
-
-# class KnuthConanFile(ConanFile):
-#     def configure(self, pure_c=False):
-#         ConanFile.configure(self)
-
-#         if self.settings.arch == "x86_64":
-#             # if self.options.get_safe("microarchitecture") is not None and self.options.microarchitecture == "_DUMMY_":
-#             #     del self.options.fix_march
-
-#             march_id = march_conan_manip(self)
-#             self.options["*"].march_id = march_id
-
-#             if self.options.get_safe("march_id") is not None:
-#                 self.options.march_id = march_id
-
-#             if self.options.get_safe("march_id") is not None:
-#                 self.output.info("Building microarchitecture ID: %s" % march_id)
-#                 exts = decode_extensions(march_id)
-#                 exts_names = extensions_to_names(exts)
-#                 self.output.info(", ".join(exts_names))
-
-#     def cmake_basis(self, pure_c=False):
-#         cmake = CMake(self)
-#         # ...
-#         pass_march_to_compiler(self, cmake)
-#         return cmake
-
-def pass_march_to_compiler(conanobj, cmake):
-
-    if conanobj.options.get_safe("march_id") is not None:
-        march_id = str(conanobj.options.march_id)
-        flags = get_compiler_flags_arch_id(march_id,
-                                str(conanobj.settings.os),
-                                str(conanobj.settings.compiler),
-                                float(str(conanobj.settings.compiler.version)))
-
-        conanobj.output.info("Compiler flags: %s" % flags)
-        conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % cmake.definitions.get("CONAN_CXX_FLAGS", ""))
-        conanobj.output.info("Prev CONAN_C_FLAGS: %s" % cmake.definitions.get("CONAN_C_FLAGS", ""))
-
-        cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
-        cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
-
-    # if conanobj.settings.compiler != "Visual Studio":
-    #     gcc_march = str(conanobj.options.microarchitecture)
-    #     cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -march=" + gcc_march
-    #     cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -march=" + gcc_march
-    # else:
-    #     ext = msvc_to_ext(str(conanobj.options.microarchitecture))
-
-    #     if ext is not None:
-    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /arch:" + ext
-    #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /arch:" + ext
-
-
 # --------------
 
-
-
-def reserved():
-    return False
+# def reserved():
+#     return False
 
 def max_function_id():
 	a, _, _, _ = cpuid.cpuid(0)
@@ -219,10 +87,6 @@ def max_function_id():
 
 def max_extended_function():
 	a, _, _, _ = cpuid.cpuid(0x80000000)
-	return a
-
-def max_function_id():
-	a, _, _, _ = cpuid.cpuid(0)
 	return a
 
 def support_long_mode():
@@ -1396,98 +1260,6 @@ extensions_flags['gcc'] = [
     None,                      # "sev_snp"
 ]
 
-
-
-# extensions_compiler_compat = {
-#     0:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"64 bits",
-#     1:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"movbe",
-#     2:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mmx",
-#     3:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse",
-#     4:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse2",
-#     5:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse3",
-#     6:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"ssse3",
-#     7:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse41",
-#     8:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse42",
-#     9:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse4a",
-#     10:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"popcnt",
-#     11:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"lzcnt",
-#     12:  {'gcc': 6, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 6}, #"pku",
-#     13:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx",
-#     14:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx2",
-#     15:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"aes",
-#     16:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"pclmul",
-#     17:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fsgsbase",
-#     18:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"rdrnd",
-#     19:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fma3",
-#     20:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fma4",
-#     21:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"abm",
-#     22:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bmi",
-#     23:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bmi2",
-#     24:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"tbm",
-#     25:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"f16c",
-#     26:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"rdseed",
-#     27:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"adx",
-#     28:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"prefetchw",
-#     29:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clflushopt",
-#     30:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsave",
-#     31:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsaveopt",
-#     32:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsavec",
-#     33:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsaves",
-
-#     34:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512f",
-#     35:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512pf",
-#     36:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512er",
-#     37:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512vl",
-#     38:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512bw",
-#     39:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512dq",
-#     40:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512cd",
-#     41:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx5124vnniw",
-#     42:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx5124fmaps",
-#     43:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512vbmi",
-#     44:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512ifma",
-#     45:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512vbmi2",
-#     46:  {'gcc': 6, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 6}, #"avx512vpopcntdq",
-#     47:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512bitalg",
-#     48:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512vnni",
-#     49:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512bf16",
-#     50:  {'gcc': 10,'apple-clang': 1,'clang': 9,'msvc': 14,'mingw': 10}, #"avx512vp2intersect",
-
-#     51:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sha",
-#     52:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clwb",
-#     53:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"enclv",
-#     54:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"umip",
-#     55:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"ptwrite",
-#     56:  {'gcc': 6, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 6}, #"rdpid",
-#     57:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sgx",
-#     58:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"gfni",
-#     59:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"gfni_sse",
-#     60:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"vpclmulqdq",
-#     61:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"vaes",
-#     62:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"pconfig",
-#     63:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"wbnoinvd",
-#     64:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"movdir",
-#     65:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"movdir64b",
-#     66:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bfloat16",
-#     67:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnow",
-#     68:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnowext",
-#     69:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnowprefetch",
-#     70:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xop",
-#     71:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"lwp",
-#     73:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mwaitx",
-#     74:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clzero",
-#     75:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"mmxext",
-#     76:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"prefetchwt1",
-
-#     77:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"mcommit",
-#     78:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"rdpru",
-
-#     79:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"invpcid",
-#     80:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"invlpgb-tlbsync",
-#     81:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"cet_ss",
-#     82:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"snp",
-# }
-
-
 def get_available_extensions():
     data = []
     for f in extensions_map:
@@ -1532,10 +1304,10 @@ def decode_extensions(architecture_id):
     res = res.zfill(KTH_EXTENSIONS_MAX)
     return _to_ints_bin(list(reversed(res)))
 
-def get_architecture_id():
-    exts = get_available_extensions()
-    architecture_id = encode_extensions(exts)
-    return architecture_id
+# def get_architecture_id():
+#     exts = get_available_extensions()
+#     architecture_id = encode_extensions(exts)
+#     return architecture_id
 
 def extensions_to_names(exts):
     res = []
@@ -1587,93 +1359,93 @@ def vendorID():
     vend = vendorMapping.get(v, Vendor.Other)
     return vend
 
-def brandName():
-    if max_extended_function() >= 0x80000004:
-        return cpuid.cpu_name()
-    return "unknown"
+# def brandName():
+#     if max_extended_function() >= 0x80000004:
+#         return cpuid.cpu_name()
+#     return "unknown"
 
-def cacheLine():
-	if max_function_id() < 0x1:
-		return 0
+# def cacheLine():
+# 	if max_function_id() < 0x1:
+# 		return 0
 
-	_, ebx, _, _ = cpuid.cpuid(1)
-	cache = (ebx & 0xff00) >> 5 # cflush size
-	if cache == 0 and max_extended_function() >= 0x80000006:
-		_, _, ecx, _ = cpuid.cpuid(0x80000006)
-		cache = ecx & 0xff # cacheline size
-	#TODO: Read from Cache and TLB Information
-	return int(cache)
+# 	_, ebx, _, _ = cpuid.cpuid(1)
+# 	cache = (ebx & 0xff00) >> 5 # cflush size
+# 	if cache == 0 and max_extended_function() >= 0x80000006:
+# 		_, _, ecx, _ = cpuid.cpuid(0x80000006)
+# 		cache = ecx & 0xff # cacheline size
+# 	#TODO: Read from Cache and TLB Information
+# 	return int(cache)
 
-def familyModel():
-	if max_function_id() < 0x1:
-		return 0, 0
-	eax, _, _, _ = cpuid.cpuid(1)
-	family = ((eax >> 8) & 0xf) + ((eax >> 20) & 0xff)
-	model = ((eax >> 4) & 0xf) + ((eax >> 12) & 0xf0)
-	return int(family), int(model)
+# def familyModel():
+# 	if max_function_id() < 0x1:
+# 		return 0, 0
+# 	eax, _, _, _ = cpuid.cpuid(1)
+# 	family = ((eax >> 8) & 0xf) + ((eax >> 20) & 0xff)
+# 	model = ((eax >> 4) & 0xf) + ((eax >> 12) & 0xf0)
+# 	return int(family), int(model)
 
-def threadsPerCore():
-	mfi = max_function_id()
-	if mfi < 0x4 or vendorID() != Vendor.Intel:
-		return 1
+# def threadsPerCore():
+# 	mfi = max_function_id()
+# 	if mfi < 0x4 or vendorID() != Vendor.Intel:
+# 		return 1
 
-	if mfi < 0xb:
-		_, b, _, d = cpuid.cpuid(1)
-		if (d & (1 << 28)) != 0:
-			# v will contain logical core count
-			v = (b >> 16) & 255
-			if v > 1:
-				a4, _, _, _ = cpuid.cpuid(4)
-				# physical cores
-				v2 = (a4 >> 26) + 1
-				if v2 > 0:
-					return int(v) / int(v2)
-		return 1
-	_, b, _, _ = cpuid.cpuid_count(0xb, 0)
-	if b&0xffff == 0:
-		return 1
-	return int(b & 0xffff)
-
-
-def logicalCores():
-    mfi = max_function_id()
-    vend = vendorID()
-
-    if vend == Vendor.Intel:
-        # Use this on old Intel processors
-        if mfi < 0xb:
-            if mfi < 1:
-                return 0
-            # CPUID.1:EBX[23:16] represents the maximum number of addressable IDs (initial APIC ID)
-            # that can be assigned to logical processors in a physical package.
-            # The value may not be the same as the number of logical processors that are present in the hardware of a physical package.
-            _, ebx, _, _ = cpuid.cpuid(1)
-            logical = (ebx >> 16) & 0xff
-            return int(logical)
-        _, b, _, _ = cpuid.cpuid_count(0xb, 1)
-        return int(b & 0xffff)
-    elif vend == Vendor.AMD or vend == Vendor.Hygon:
-        _, b, _, _ = cpuid.cpuid(1)
-        return int((b >> 16) & 0xff)
-    else:
-        return 0
-
-def physicalCores():
-    vend = vendorID()
-
-    if vend == Vendor.Intel:
-        return logicalCores() / threadsPerCore()
-    elif vend == Vendor.AMD or vend == Vendor.Hygon:
-        if max_extended_function() >= 0x80000008:
-            _, _, c, _ = cpuid.cpuid(0x80000008)
-            return int(c&0xff) + 1
-    return 0
+# 	if mfi < 0xb:
+# 		_, b, _, d = cpuid.cpuid(1)
+# 		if (d & (1 << 28)) != 0:
+# 			# v will contain logical core count
+# 			v = (b >> 16) & 255
+# 			if v > 1:
+# 				a4, _, _, _ = cpuid.cpuid(4)
+# 				# physical cores
+# 				v2 = (a4 >> 26) + 1
+# 				if v2 > 0:
+# 					return int(v) / int(v2)
+# 		return 1
+# 	_, b, _, _ = cpuid.cpuid_count(0xb, 0)
+# 	if b&0xffff == 0:
+# 		return 1
+# 	return int(b & 0xffff)
 
 
-def support_rdtscp():
-    if max_extended_function() < 0x80000001: return False
-    _, _, _, d = cpuid.cpuid(0x80000001)
-    return (d & (1 << 27)) != 0
+# def logicalCores():
+#     mfi = max_function_id()
+#     vend = vendorID()
+
+#     if vend == Vendor.Intel:
+#         # Use this on old Intel processors
+#         if mfi < 0xb:
+#             if mfi < 1:
+#                 return 0
+#             # CPUID.1:EBX[23:16] represents the maximum number of addressable IDs (initial APIC ID)
+#             # that can be assigned to logical processors in a physical package.
+#             # The value may not be the same as the number of logical processors that are present in the hardware of a physical package.
+#             _, ebx, _, _ = cpuid.cpuid(1)
+#             logical = (ebx >> 16) & 0xff
+#             return int(logical)
+#         _, b, _, _ = cpuid.cpuid_count(0xb, 1)
+#         return int(b & 0xffff)
+#     elif vend == Vendor.AMD or vend == Vendor.Hygon:
+#         _, b, _, _ = cpuid.cpuid(1)
+#         return int((b >> 16) & 0xff)
+#     else:
+#         return 0
+
+# def physicalCores():
+#     vend = vendorID()
+
+#     if vend == Vendor.Intel:
+#         return logicalCores() / threadsPerCore()
+#     elif vend == Vendor.AMD or vend == Vendor.Hygon:
+#         if max_extended_function() >= 0x80000008:
+#             _, _, c, _ = cpuid.cpuid(0x80000008)
+#             return int(c&0xff) + 1
+#     return 0
+
+
+# def support_rdtscp():
+#     if max_extended_function() < 0x80000001: return False
+#     _, _, _, d = cpuid.cpuid(0x80000001)
+#     return (d & (1 << 27)) != 0
 
 
 # ----------------------------------------------------------------------
@@ -1705,6 +1477,22 @@ def test_is_superset_of():
     assert(not is_superset_of([], [1]))
 
 # test_is_superset_of()
+
+def set_diff(a, b):
+    n = min(len(a), len(b))
+    m = max(len(a), len(b))
+
+    res = [0] * m
+
+    for i in range(n):
+        res[i] = a[i] - b[i]
+
+    # for i in range(n, len(b)):
+    #     if b[i] == 1: return False
+
+    return res
+
+
 # ----------------------------------------------------------------------
 
 def filter_extensions(exts, os, comp, comp_ver):
@@ -1765,21 +1553,6 @@ def get_compiler_flags_arch_id(arch_id, os, comp, comp_ver):
 
 
 
-def set_diff(a, b):
-    n = min(len(a), len(b))
-    m = max(len(a), len(b))
-
-    res = [0] * m
-
-    for i in range(n):
-        res[i] = a[i] - b[i]
-
-    # for i in range(n, len(b)):
-    #     if b[i] == 1: return False
-
-    return res
-
-
 # -----------------------------------------------------------------
 
 
@@ -1799,7 +1572,11 @@ def level3_on():
     exts += [0] * (KTH_EXTENSIONS_MAX - len(exts))
     return exts
 
-def hmmm(os, comp, comp_ver):
+
+
+
+
+def several_tests(os, comp, comp_ver):
     # exts = all_exts_on()
     # exts = all_exts_off()
     level3_exts = level3_on()
@@ -1848,41 +1625,86 @@ def hmmm(os, comp, comp_ver):
         print("Level3 compiler flags: ", level3_flags)
 
 
-def main():
-    # print(support_level1_features())
-    # print(support_level2_features())
-    # print(support_level3_features())
-    # print(support_level4_features())
+# def main():
+#     # print(support_level1_features())
+#     # print(support_level2_features())
+#     # print(support_level3_features())
+#     # print(support_level4_features())
 
-    os = 'Linux'
-    comp = 'gcc'
-    comp_ver = 12
-    hmmm(os, comp, comp_ver)
+#     os = 'Linux'
+#     comp = 'gcc'
+#     comp_ver = 12
+#     several_tests(os, comp, comp_ver)
 
+#     # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
+#     # print(comp_flags2)
 
+#     # for i in range(len(filtered)):
+#     #     print(filtered[i])
 
+# if __name__ == "__main__":
+#     main()
 
-    # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
-    # print(comp_flags2)
 
-    # for i in range(len(filtered)):
-    #     print(filtered[i])
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------
+# Links
 
-if __name__ == "__main__":
-    main()
 
+# https://github.com/klauspost/cpuid/blob/master/cpuid.go
+# https://docs.microsoft.com/es-es/cpp/intrinsics/cpuid-cpuidex?view=msvc-170
+# https://en.wikipedia.org/wiki/CPUID
+# https://www.felixcloutier.com/x86/
 
+# Intel
+# https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf
 
+# AMD64 Architecture Programmer’s Manual Volume 2: System Programming
+#   https://www.amd.com/system/files/TechDocs/24593.pdf
+# AMD64 Architecture Programmer’s Manual Volume 3: General-Purpose and System Instructions
+#   https://www.amd.com/system/files/TechDocs/24594.pdf
+# AMD CPUID Specification
+#   https://www.amd.com/system/files/TechDocs/25481.pdf
 
 
 
+# https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set#cite_note-fam16hsheet-4
+# https://en.wikipedia.org/wiki/SSE4#POPCNT_and_LZCNT
+# https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/x86-Options.html#x86-Options
+# https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels
+# https://gitlab.com/x86-psABIs/x86-64-ABI
+# https://developers.redhat.com/blog/2021/01/05/building-red-hat-enterprise-linux-9-for-the-x86-64-v2-microarchitecture-level#background_of_the_x86_64_microarchitecture_levels
+# https://lists.llvm.org/pipermail/llvm-dev/2020-July/143289.html
 
+# https://gcc.gnu.org/onlinedocs/gcc-3.1.1/gcc/i386-and-x86-64-Options.html#i386%20and%20x86-64%20Options
+# https://gcc.gnu.org/onlinedocs/gcc-3.2.3/gcc/i386-and-x86-64-Options.html#i386%20and%20x86-64%20Options
+# https://gcc.gnu.org/onlinedocs/gcc-3.3.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-3.4.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
 
+# https://gcc.gnu.org/onlinedocs/gcc-4.0.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.2.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.3.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.4.7/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.5.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.6.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.7.4/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.9.4/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
 
+# https://gcc.gnu.org/onlinedocs/gcc-5.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-6.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-7.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-8.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-9.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-10.4.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-11.3.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/x86-Options.html#x86-Options
 
+# ------------------------------------------------------------------------------------------------
 
+# https://github.com/pixelb/scripts/blob/master/scripts/gcccpuopt
 
 
 
@@ -1900,184 +1722,216 @@ if __name__ == "__main__":
 
 
 
+# # -----------------------------------------------------------------
 
+# def march_conan_manip(conanobj):
+#     if conanobj.settings.arch != "x86_64":
+#         return (None, None)
+
+#     march_from = 'taken from cpuid'
+#     march_id = get_architecture_id()
+
+#     if conanobj.options.get_safe("march_id") is not None:
+#         if conanobj.options.march_id == "_DUMMY_":
+#             conanobj.options.march_id = march_id
+#         else:
+#             march_id = conanobj.options.march_id
+#             march_from = 'user defined'
+#             #TODO(fernando): check for march_id errors
+
+#     conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from, march_id))
+
+#     return (march_id)
+
+# def pass_march_to_compiler(conanobj, cmake):
 
+#     if conanobj.options.get_safe("march_id") is not None:
+#         march_id = str(conanobj.options.march_id)
+#         flags = get_compiler_flags_arch_id(march_id,
+#                                 str(conanobj.settings.os),
+#                                 str(conanobj.settings.compiler),
+#                                 float(str(conanobj.settings.compiler.version)))
 
+#         conanobj.output.info("Compiler flags: %s" % flags)
+#         conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % cmake.definitions.get("CONAN_CXX_FLAGS", ""))
+#         conanobj.output.info("Prev CONAN_C_FLAGS: %s" % cmake.definitions.get("CONAN_C_FLAGS", ""))
 
+#         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
+#         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
 
+#     # if conanobj.settings.compiler != "Visual Studio":
+#     #     gcc_march = str(conanobj.options.microarchitecture)
+#     #     cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -march=" + gcc_march
+#     #     cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -march=" + gcc_march
+#     # else:
+#     #     ext = msvc_to_ext(str(conanobj.options.microarchitecture))
 
+#     #     if ext is not None:
+#     #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /arch:" + ext
+#     #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /arch:" + ext
 
 
 
 
+# # -----------------------------------------------------------------
 
 
 
+# #TODO(fernando): implementar RTCounter() del proyecto Golang
+# #TODO(fernando): implementar Ia32TscAux() del proyecto Golang
 
+# # LogicalCPU will return the Logical CPU the code is currently executing on.
+# # This is likely to change when the OS re-schedules the running thread
+# # to another CPU.
+# # If the current core cannot be detected, -1 will be returned.
+# def LogicalCPU():
+#     if max_function_id() < 1:
+#         return -1
+#     _, ebx, _, _ = cpuid.cpuid(1)
+#     return int(ebx >> 24)
 
 
+# # VM Will return true if the cpu id indicates we are in
+# # a virtual machine. This is only a hint, and will very likely
+# # have many false negatives.
+# def VM():
+#     vend = vendorID()
+#     if vend == Vendor.MSVM or vend == Vendor.KVM or vend == Vendor.VMware or vend == Vendor.XenHVM or vend == Vendor.Bhyve:
+#         return True
+#     return False
 
+# def Hyperthreading():
+#     if max_function_id() < 4: return False
+#     _, _, _, d = cpuid.cpuid(1)
+#     if vendorID() == Vendor.Intel and (d&(1<<28)) != 0:
+#         if threadsPerCore() > 1:
+#             return True
+#     return False
 
 
-# -----------------------------------------------------------------
+# # -----------------------------------------------------------------
+# # OS support
+# # -----------------------------------------------------------------
 
+# # XSAVE family
+# def support_osxsave():
+#     if max_function_id() < 0x00000001: return False
+#     _, _, c, _ = cpuid.cpuid(0x00000001)
+#     return (c & (1 << 27)) != 0
 
+# # OSPKE (Instructions RDPKRU, WRPKRU)
+# # OS has enabled Memory Protection Keys and use of the RDPKRU/WRPKRU instructions by setting CR4.PKE=1.
+# # Note(fernando): I think it is related to PKU
+# # 0000_0007_0 ECX[4]
+# # Note(fernando): We do not need to check OS flags. We just need to check CPU flags because
+# def support_ospke_unused():
+#     # if max_function_id() < 0x00000007: return False
+#     # _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
+#     # return (c & (1 << 4)) != 0
+#     return False
 
-#TODO(fernando): implementar RTCounter() del proyecto Golang
-#TODO(fernando): implementar Ia32TscAux() del proyecto Golang
+# # https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#Operating_system_support
+# def support_avx_os():
+#     # Copied from: http://stackoverflow.com/a/22521619/922184
 
-# LogicalCPU will return the Logical CPU the code is currently executing on.
-# This is likely to change when the OS re-schedules the running thread
-# to another CPU.
-# If the current core cannot be detected, -1 will be returned.
-def LogicalCPU():
-    if max_function_id() < 1:
-        return -1
-    _, ebx, _, _ = cpuid.cpuid(1)
-    return int(ebx >> 24)
+#     if max_function_id() < 0x00000001: return False
+#     _, _, c, _ = cpuid.cpuid(0x00000001)
 
+#     XGETBV = (c & (1 << 26)) != 0
+#     osUsesXSAVE_XRSTORE = (c & (1 << 27)) != 0
+#     cpuAVXSuport = (c & (1 << 28)) != 0
 
-# VM Will return true if the cpu id indicates we are in
-# a virtual machine. This is only a hint, and will very likely
-# have many false negatives.
-def VM():
-    vend = vendorID()
-    if vend == Vendor.MSVM or vend == Vendor.KVM or vend == Vendor.VMware or vend == Vendor.XenHVM or vend == Vendor.Bhyve:
-        return True
-    return False
+#     if not (XGETBV and osUsesXSAVE_XRSTORE and cpuAVXSuport):
+#         return False
 
-def Hyperthreading():
-    if max_function_id() < 4: return False
-    _, _, _, d = cpuid.cpuid(1)
-    if vendorID() == Vendor.Intel and (d&(1<<28)) != 0:
-        if threadsPerCore() > 1:
-            return True
-    return False
+#     xcrFeatureMask = cpuid.xgetbv(0)
+#     return (xcrFeatureMask & 0x6) == 0x6
 
+# def support_avx2_os():
+#     return support_avx_os() and support_avx2_cpu()
 
-# -----------------------------------------------------------------
-# OS support
-# -----------------------------------------------------------------
+# def support_fma3_os():
+#     return support_avx_os() and support_fma3_cpu()
 
-# XSAVE family
-def support_osxsave():
-    if max_function_id() < 0x00000001: return False
-    _, _, c, _ = cpuid.cpuid(0x00000001)
-    return (c & (1 << 27)) != 0
+# def support_fma4_os():
+#     return support_avx_os() and support_fma4_cpu()
 
-# OSPKE (Instructions RDPKRU, WRPKRU)
-# OS has enabled Memory Protection Keys and use of the RDPKRU/WRPKRU instructions by setting CR4.PKE=1.
-# Note(fernando): I think it is related to PKU
-# 0000_0007_0 ECX[4]
-# Note(fernando): We do not need to check OS flags. We just need to check CPU flags because
-def support_ospke_unused():
-    # if max_function_id() < 0x00000007: return False
-    # _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
-    # return (c & (1 << 4)) != 0
-    return False
+# def support_xsave_os():
+#     return support_xsave_cpu() and support_osxsave()
 
-# https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#Operating_system_support
-def support_avx_os():
-    # Copied from: http://stackoverflow.com/a/22521619/922184
+# def support_xsaveopt_os():
+#     return support_xsaveopt_cpu() and support_xsave_os()
 
-    if max_function_id() < 0x00000001: return False
-    _, _, c, _ = cpuid.cpuid(0x00000001)
+# def support_xsavec_os():
+#     return support_xsavec_cpu() and support_xsave_os()
 
-    XGETBV = (c & (1 << 26)) != 0
-    osUsesXSAVE_XRSTORE = (c & (1 << 27)) != 0
-    cpuAVXSuport = (c & (1 << 28)) != 0
+# def support_xsaves_os():
+#     return support_xsaves_cpu() and support_xsave_os()
 
-    if not (XGETBV and osUsesXSAVE_XRSTORE and cpuAVXSuport):
-        return False
+# def support_avx512_os():
+#     if max_function_id() < 0x00000001: return False
+#     _, _, c, _ = cpuid.cpuid(0x00000001)
 
-    xcrFeatureMask = cpuid.xgetbv(0)
-    return (xcrFeatureMask & 0x6) == 0x6
+#     # Only detect AVX-512 features if XGETBV is supported
+#     if c & ((1<<26)|(1<<27)) != (1<<26)|(1<<27): return False
 
-def support_avx2_os():
-    return support_avx_os() and support_avx2_cpu()
+#     # Check for OS support
+#     eax = cpuid.xgetbv(0)
 
-def support_fma3_os():
-    return support_avx_os() and support_fma3_cpu()
+#     # Verify that XCR0[7:5] = 111b (OPMASK state, upper 256-bit of ZMM0-ZMM15 and
+#     # ZMM16-ZMM31 state are enabled by OS)
+#     #  and that XCR0[2:1] = 11b (XMM state and YMM state are enabled by OS).
+#     return (eax>>5)&7 == 7 and (eax>>1)&3 == 3
 
-def support_fma4_os():
-    return support_avx_os() and support_fma4_cpu()
+# def support_avx512f_os():
+#     return support_avx512_os() and support_avx512f_cpu()
 
-def support_xsave_os():
-    return support_xsave_cpu() and support_osxsave()
+# def support_avx512pf_os():
+#     return support_avx512_os() and support_avx512pf_cpu()
 
-def support_xsaveopt_os():
-    return support_xsaveopt_cpu() and support_xsave_os()
+# def support_avx512er_os():
+#     return support_avx512_os() and support_avx512er_cpu()
 
-def support_xsavec_os():
-    return support_xsavec_cpu() and support_xsave_os()
+# def support_avx512vl_os():
+#     return support_avx512_os() and support_avx512vl_cpu()
 
-def support_xsaves_os():
-    return support_xsaves_cpu() and support_xsave_os()
+# def support_avx512bw_os():
+#     return support_avx512_os() and support_avx512bw_cpu()
 
-def support_avx512_os():
-    if max_function_id() < 0x00000001: return False
-    _, _, c, _ = cpuid.cpuid(0x00000001)
+# def support_avx512dq_os():
+#     return support_avx512_os() and support_avx512dq_cpu()
 
-    # Only detect AVX-512 features if XGETBV is supported
-    if c & ((1<<26)|(1<<27)) != (1<<26)|(1<<27): return False
+# def support_avx512cd_os():
+#     return support_avx512_os() and support_avx512cd_cpu()
 
-    # Check for OS support
-    eax = cpuid.xgetbv(0)
+# def support_avx5124vnniw_os():
+#     return support_avx512_os() and support_avx5124vnniw_cpu()
 
-    # Verify that XCR0[7:5] = 111b (OPMASK state, upper 256-bit of ZMM0-ZMM15 and
-    # ZMM16-ZMM31 state are enabled by OS)
-    #  and that XCR0[2:1] = 11b (XMM state and YMM state are enabled by OS).
-    return (eax>>5)&7 == 7 and (eax>>1)&3 == 3
+# def support_avx5124fmaps_os():
+#     return support_avx512_os() and support_avx5124fmaps_cpu()
 
-def support_avx512f_os():
-    return support_avx512_os() and support_avx512f_cpu()
+# def support_avx512vbmi_os():
+#     return support_avx512_os() and support_avx512vbmi_cpu()
 
-def support_avx512pf_os():
-    return support_avx512_os() and support_avx512pf_cpu()
+# def support_avx512ifma_os():
+#     return support_avx512_os() and support_avx512ifma_cpu()
 
-def support_avx512er_os():
-    return support_avx512_os() and support_avx512er_cpu()
+# def support_avx512vbmi2_os():
+#     return support_avx512_os() and support_avx512vbmi2_cpu()
 
-def support_avx512vl_os():
-    return support_avx512_os() and support_avx512vl_cpu()
+# def support_avx512vpopcntdq_os():
+#     return support_avx512_os() and support_avx512vpopcntdq_cpu()
 
-def support_avx512bw_os():
-    return support_avx512_os() and support_avx512bw_cpu()
+# def support_avx512bitalg_os():
+#     return support_avx512_os() and support_avx512bitalg_cpu()
 
-def support_avx512dq_os():
-    return support_avx512_os() and support_avx512dq_cpu()
+# def support_avx512vnni_os():
+#     return support_avx512_os() and support_avx512vnni_cpu()
 
-def support_avx512cd_os():
-    return support_avx512_os() and support_avx512cd_cpu()
+# def support_avx512bf16_os():
+#     return support_avx512_os() and support_avx512bf16_cpu()
 
-def support_avx5124vnniw_os():
-    return support_avx512_os() and support_avx5124vnniw_cpu()
+# def support_avx512vp2intersect_os():
+#     return support_avx512_os() and support_avx512vp2intersect_cpu()
 
-def support_avx5124fmaps_os():
-    return support_avx512_os() and support_avx5124fmaps_cpu()
-
-def support_avx512vbmi_os():
-    return support_avx512_os() and support_avx512vbmi_cpu()
-
-def support_avx512ifma_os():
-    return support_avx512_os() and support_avx512ifma_cpu()
-
-def support_avx512vbmi2_os():
-    return support_avx512_os() and support_avx512vbmi2_cpu()
-
-def support_avx512vpopcntdq_os():
-    return support_avx512_os() and support_avx512vpopcntdq_cpu()
-
-def support_avx512bitalg_os():
-    return support_avx512_os() and support_avx512bitalg_cpu()
-
-def support_avx512vnni_os():
-    return support_avx512_os() and support_avx512vnni_cpu()
-
-def support_avx512bf16_os():
-    return support_avx512_os() and support_avx512bf16_cpu()
-
-def support_avx512vp2intersect_os():
-    return support_avx512_os() and support_avx512vp2intersect_cpu()
-
-# ------------------------------------------------------------------------------------------
+# # ------------------------------------------------------------------------------------------
