@@ -22,7 +22,7 @@ jobs:
           pip install wheel --upgrade
           pip install twine --upgrade
           pip install cpuid --upgrade
-          pip install conan --upgrade
+          # pip install conan --upgrade
           pip install setuptools --upgrade
         shell: bash
 
