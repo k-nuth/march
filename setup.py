@@ -11,7 +11,7 @@ import os
 __title__ = "microarch"
 __summary__ = "Knuth Microarchitecture Management (CPUID)"
 __uri__ = "https://github.com/k-nuth/microarch"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"

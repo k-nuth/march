@@ -1572,78 +1572,107 @@ def level3_on():
     exts += [0] * (KTH_EXTENSIONS_MAX - len(exts))
     return exts
 
+def get_all_data(os, comp, comp_ver):
+    cpu_exts = get_available_extensions()
+    cpu_marchid = encode_extensions(cpu_exts)
+    cpu_names = extensions_to_names(cpu_exts)
 
+    comp_exts = filter_extensions(cpu_exts, os, comp, comp_ver)
+    comp_marchid = encode_extensions(comp_exts)
+    comp_names = extensions_to_names(comp_exts)
+    comp_flags = get_compiler_flags(comp_exts, os, comp, comp_ver)
 
+    level3_exts = level3_on()
+    level3_marchid = encode_extensions(level3_exts)
+    level3_names = extensions_to_names(level3_exts)
+    level3_flags = get_compiler_flags(level3_exts, os, comp, comp_ver)
+
+    return {
+        'cpu_exts': cpu_exts,
+        'cpu_marchid': cpu_marchid,
+        'cpu_names': cpu_names,
+
+        'comp_exts': comp_exts,
+        'comp_marchid': comp_marchid,
+        'comp_names': comp_names,
+        'comp_flags': comp_flags,
+
+        'level3_exts': level3_exts,
+        'level3_marchid': level3_marchid,
+        'level3_names': level3_names,
+        'level3_flags': level3_flags,
+    }
 
 
 def several_tests(os, comp, comp_ver):
-    # exts = all_exts_on()
-    # exts = all_exts_off()
-    level3_exts = level3_on()
-    # print(level3_exts)
+    print(get_all_data(os, comp, comp_ver))
+#     # exts = all_exts_on()
+#     # exts = all_exts_off()
+#     level3_exts = level3_on()
+#     # print(level3_exts)
 
-    cpu_exts = get_available_extensions()
-    # print("full extensions array:     ", cpu_exts)
-    cpu_marchid = encode_extensions(cpu_exts)
-    print("your CPU march id: ", cpu_marchid)
-    cpu_names = extensions_to_names(cpu_exts)
-    print("your CPU extensions: ", cpu_names)
-
-
-    comp_exts = filter_extensions(cpu_exts, os, comp, comp_ver)
-    # print("filtered extensions array: ", filtered)
-
-    diff = set_diff(cpu_exts, comp_exts)
-    # print("Extensions not supported by your compiler: ", diff)
-    names = extensions_to_names(diff)
-    print("Extensions not supported by your compiler: ", names)
+#     cpu_exts = get_available_extensions()
+#     # print("full extensions array:     ", cpu_exts)
+#     cpu_marchid = encode_extensions(cpu_exts)
+#     print("your CPU march id: ", cpu_marchid)
+#     cpu_names = extensions_to_names(cpu_exts)
+#     print("your CPU extensions: ", cpu_names)
 
 
-    # print(is_superset_of(cpu_exts, comp_exts))
-    # print(is_superset_of(comp_exts, cpu_exts))
+#     comp_exts = filter_extensions(cpu_exts, os, comp, comp_ver)
+#     # print("filtered extensions array: ", filtered)
 
-    is_super_set = is_superset_of(comp_exts, level3_exts)
-    print("your compiler march is a superset of level3 exts: ", is_super_set)
-
-    comp_marchid = encode_extensions(comp_exts)
-    print("your compiler march id: ", comp_marchid)
-
-    names = extensions_to_names(comp_exts)
-    print("your compiler extensions: ", names)
-
-    comp_flags = get_compiler_flags(comp_exts, os, comp, comp_ver)
-    print("compiler flags for your extensions: ", comp_flags)
-
-    if is_super_set:
-        level3_marchid = encode_extensions(level3_exts)
-        print("Level3 march id: ", level3_marchid)
-
-        names = extensions_to_names(level3_exts)
-        print("Level3 extensions: ", names)
-
-        level3_flags = get_compiler_flags(level3_exts, os, comp, comp_ver)
-        print("Level3 compiler flags: ", level3_flags)
+#     diff = set_diff(cpu_exts, comp_exts)
+#     # print("Extensions not supported by your compiler: ", diff)
+#     names = extensions_to_names(diff)
+#     print("Extensions not supported by your compiler: ", names)
 
 
-# def main():
-#     # print(support_level1_features())
-#     # print(support_level2_features())
-#     # print(support_level3_features())
-#     # print(support_level4_features())
+#     # print(is_superset_of(cpu_exts, comp_exts))
+#     # print(is_superset_of(comp_exts, cpu_exts))
 
-#     os = 'Linux'
-#     comp = 'gcc'
-#     comp_ver = 12
-#     several_tests(os, comp, comp_ver)
+#     is_super_set = is_superset_of(comp_exts, level3_exts)
+#     print("your compiler march is a superset of level3 exts: ", is_super_set)
 
-#     # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
-#     # print(comp_flags2)
+#     comp_marchid = encode_extensions(comp_exts)
+#     print("your compiler march id: ", comp_marchid)
 
-#     # for i in range(len(filtered)):
-#     #     print(filtered[i])
+#     names = extensions_to_names(comp_exts)
+#     print("your compiler extensions: ", names)
 
-# if __name__ == "__main__":
-#     main()
+#     comp_flags = get_compiler_flags(comp_exts, os, comp, comp_ver)
+#     print("compiler flags for your extensions: ", comp_flags)
+
+#     if is_super_set:
+#         level3_marchid = encode_extensions(level3_exts)
+#         print("Level3 march id: ", level3_marchid)
+
+#         names = extensions_to_names(level3_exts)
+#         print("Level3 extensions: ", names)
+
+#         level3_flags = get_compiler_flags(level3_exts, os, comp, comp_ver)
+#         print("Level3 compiler flags: ", level3_flags)
+
+
+def main():
+    # print(support_level1_features())
+    # print(support_level2_features())
+    # print(support_level3_features())
+    # print(support_level4_features())
+
+    os = 'Linux'
+    comp = 'gcc'
+    comp_ver = 12
+    several_tests(os, comp, comp_ver)
+
+    # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
+    # print(comp_flags2)
+
+    # for i in range(len(filtered)):
+    #     print(filtered[i])
+
+if __name__ == "__main__":
+    main()
 
 
 
