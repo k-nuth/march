@@ -1260,6 +1260,281 @@ extensions_flags['gcc'] = [
     None,                      # "sev_snp"
 ]
 
+extensions_flags['clang'] = [
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+
+    # Level 0 (64 bits support)
+    # 16:
+    {'min_version': 7,  'flags': ["-m32", "-m64"]},
+
+    # Level 1 (baseline)
+    # 17:
+    {'min_version': 7,  'flags': ""},                        # "CMOV"        supported by no flags
+    {'min_version': 7,  'flags': ""},                        # "CX8"         supported by no flags
+    {'min_version': 7,  'flags': ""},                        # "FPU"         supported by no flags
+    {'min_version': 7,  'flags': "-mfxsr"},
+    {'min_version': 7,  'flags': "-mmmx"},
+    {'min_version': 7,  'flags': ""},                        # "SCE"         supported by no flags
+    {'min_version': 7,  'flags': "-msse"},
+    {'min_version': 7,  'flags': "-msse2"},
+
+    # Level 2 - x86-64-v2
+    {'min_version': 7,  'flags': "-mcx16"},
+    {'min_version': 7,  'flags': "-msahf"},                 # Supported on Clang 6.0.1 but not supported on Clang 6.0.0, so the min Clang version is 7
+    {'min_version': 7,  'flags': "-mpopcnt"},
+    {'min_version': 7,  'flags': "-msse3"},
+    {'min_version': 7,  'flags': "-msse4.1"},
+    {'min_version': 7,  'flags': "-msse4.2"},
+    {'min_version': 7,  'flags': "-mssse3"},
+
+    # Level 3 - x86-64-v3
+    {'min_version': 7,  'flags': "-mavx"},
+    {'min_version': 7,  'flags': "-mavx2"},
+    {'min_version': 7,  'flags': "-mbmi"},
+    {'min_version': 7,  'flags': "-mbmi2"},
+    {'min_version': 7,  'flags': "-mf16c"},
+    {'min_version': 7,  'flags': "-mfma"},
+    {'min_version': 7,  'flags': "-mlzcnt"},          # Clang does not have dual flag -mlzcnt -mabm, it just has -mlzcnt
+    {'min_version': 7,  'flags': "-mmovbe"},
+    {'min_version': 7,  'flags': "-mxsave"},
+
+    # Level 4 - x86-64-v4
+    {'min_version': 7,  'flags': "-mavx512f"},
+    {'min_version': 7,  'flags': "-mavx512bw"},
+    {'min_version': 7,  'flags': "-mavx512cd"},
+    {'min_version': 7,  'flags': "-mavx512dq"},
+    {'min_version': 7,  'flags': "-mavx512vl"},
+
+    # Other Features ------------------------------------------
+
+    {'min_version': 7,  'flags': "-msse4a"},
+    {'min_version': 7,  'flags': "-mpku"},
+    {'min_version': 7,  'flags': "-mpclmul"},
+    {'min_version': 7,  'flags': "-mfsgsbase"},
+    {'min_version': 7,  'flags': "-mrdrnd"},
+    {'min_version': 7,  'flags': "-mfma4"},
+    {'min_version': 7,  'flags': "-mxop"},
+    {'min_version': 7,  'flags': "-mtbm"},
+    {'min_version': 7,  'flags': "-mrdseed"},
+    {'min_version': 7,  'flags': "-madx"},
+    {'min_version': 7,  'flags': "-m3dnow"},
+    {'min_version': 7,  'flags': "-m3dnowa"},                    # "3dnowext" enhanced 3DNow!
+    {'min_version': 7,  'flags': "-mprfchw"},                    # "prefetchw"
+    {'min_version': 7,  'flags': "-mprefetchwt1"},
+    {'min_version': 7,  'flags': "-mclflushopt"},
+    {'min_version': 7,  'flags': "-mxsaveopt"},
+    {'min_version': 7,  'flags': "-mxsavec"},
+    {'min_version': 7,  'flags': "-mxsaves"},
+    {'min_version': 7,  'flags': "-mclwb"},
+    {'min_version': 7,  'flags': "-mptwrite"},
+    {'min_version': 7,  'flags': "-mrdpid"},
+    {'min_version': 7,  'flags': "-msgx"},
+    {'min_version': 7,  'flags': "-mgfni"},
+    {'min_version': 7,  'flags': "-mvpclmulqdq"},
+    {'min_version': 7,  'flags': "-mpconfig"},
+    {'min_version': 7,  'flags': "-mwbnoinvd"},
+    {'min_version': 7,  'flags': "-mmovdiri"},
+    {'min_version': 7,  'flags': "-mmovdir64b"},
+    {'min_version': 7,  'flags': "-mlwp"},
+    {'min_version': 7,  'flags': "-mmwaitx"},
+    {'min_version': 7,  'flags': "-mclzero"},
+    None,                                                         # "invlpgb_tlbsync"         TODO(fernando): y este???? https://www.phoronix.com/news/AMD-Zen-3-Inst-Fixes-GCC11
+    {'min_version': 7,  'flags': "-mshstk"},                      # "cet_ss"
+    {'min_version': 12, 'flags': "-mavxvnni"},
+    {'min_version': 7,  'flags': "-mrtm"},                        # "tsxrtm"
+    None,                                                         # -mhle
+    {'min_version': 7,  'flags': "-mwaitpkg"},
+    {'min_version': 9,  'flags': "-menqcmd"},
+    {'min_version': 12, 'flags': "-muintr"},
+    {'min_version': 11, 'flags': "-mtsxldtrk"},
+    {'min_version': 7,  'flags': "-mcldemote"},
+    {'min_version': 11, 'flags': "-mserialize"},
+    {'min_version': 12, 'flags': "-mhreset"},
+    {'min_version': 7,  'flags': "-maes"},
+    {'min_version': 7,  'flags': "-mvaes"},
+    {'min_version': 7,  'flags': "-msha"},
+    {'min_version': 12, 'flags': "-mkl"},
+    {'min_version': 12, 'flags': "-mwidekl"},
+    {'min_version': 14, 'flags': "-mavx512fp16"},
+    {'min_version': 7,  'flags': "-mavx512pf"},
+    {'min_version': 7,  'flags': "-mavx512er"},
+    None,                                                         # -mavx5124vnniw
+    None,                                                         # -mavx5124fmaps
+    {'min_version': 7,  'flags': "-mavx512vbmi"},
+    {'min_version': 7,  'flags': "-mavx512ifma"},
+    {'min_version': 7,  'flags': "-mavx512vbmi2"},
+    {'min_version': 7,  'flags': "-mavx512vpopcntdq"},
+    {'min_version': 7,  'flags': "-mavx512bitalg"},
+    {'min_version': 7,  'flags': "-mavx512vnni"},
+    {'min_version': 9,  'flags': "-mavx512bf16"},
+    {'min_version': 9,  'flags': "-mavx512vp2intersect"},
+    {'min_version': 11, 'flags': "-mamx-bf16"},
+    {'min_version': 11, 'flags': "-mamx-tile"},
+    {'min_version': 11, 'flags': "-mamx-int8"},
+    None,                      # "mmxext"
+    None,                      # "xgetbv_ecx1"
+    None,                      # "umip"
+    None,                      # "sgx_lc"
+    None,                      # "mcommit"
+    None,                      # "rdpru"
+    None,                      # "invpcid"
+    None,                      # "sev_snp"
+]
+
+extensions_flags['apple-clang'] = [
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+
+    # Level 0 (64 bits support)
+    # 16:
+    {'min_version': 13, 'flags': ["-m32", "-m64"]},
+
+    # Level 1 (baseline)
+    # 17:
+    {'min_version': 13, 'flags': ""},                        # "CMOV"        supported by no flags
+    {'min_version': 13, 'flags': ""},                        # "CX8"         supported by no flags
+    {'min_version': 13, 'flags': ""},                        # "FPU"         supported by no flags
+    {'min_version': 13, 'flags': "-mfxsr"},
+    {'min_version': 13, 'flags': "-mmmx"},
+    {'min_version': 13, 'flags': ""},                        # "SCE"         supported by no flags
+    {'min_version': 13, 'flags': "-msse"},
+    {'min_version': 13, 'flags': "-msse2"},
+
+    # Level 2 - x86-64-v2
+    {'min_version': 13, 'flags': "-mcx16"},
+    {'min_version': 13, 'flags': "-msahf"},                 # Supported on Clang 6.0.1 but not supported on Clang 6.0.0, so the min Clang version is 7
+    {'min_version': 13, 'flags': "-mpopcnt"},
+    {'min_version': 13, 'flags': "-msse3"},
+    {'min_version': 13, 'flags': "-msse4.1"},
+    {'min_version': 13, 'flags': "-msse4.2"},
+    {'min_version': 13, 'flags': "-mssse3"},
+
+    # Level 3 - x86-64-v3
+    {'min_version': 13, 'flags': "-mavx"},
+    {'min_version': 13, 'flags': "-mavx2"},
+    {'min_version': 13, 'flags': "-mbmi"},
+    {'min_version': 13, 'flags': "-mbmi2"},
+    {'min_version': 13, 'flags': "-mf16c"},
+    {'min_version': 13, 'flags': "-mfma"},
+    {'min_version': 13, 'flags': "-mlzcnt"},          # Clang does not have dual flag -mlzcnt -mabm, it just has -mlzcnt
+    {'min_version': 13, 'flags': "-mmovbe"},
+    {'min_version': 13, 'flags': "-mxsave"},
+
+    # Level 4 - x86-64-v4
+    {'min_version': 13, 'flags': "-mavx512f"},
+    {'min_version': 13, 'flags': "-mavx512bw"},
+    {'min_version': 13, 'flags': "-mavx512cd"},
+    {'min_version': 13, 'flags': "-mavx512dq"},
+    {'min_version': 13, 'flags': "-mavx512vl"},
+
+    # Other Features ------------------------------------------
+
+    {'min_version': 13, 'flags': "-msse4a"},
+    {'min_version': 13, 'flags': "-mpku"},
+    {'min_version': 13, 'flags': "-mpclmul"},
+    {'min_version': 13, 'flags': "-mfsgsbase"},
+    {'min_version': 13, 'flags': "-mrdrnd"},
+    {'min_version': 13, 'flags': "-mfma4"},
+    {'min_version': 13, 'flags': "-mxop"},
+    {'min_version': 13, 'flags': "-mtbm"},
+    {'min_version': 13, 'flags': "-mrdseed"},
+    {'min_version': 13, 'flags': "-madx"},
+    {'min_version': 13, 'flags': "-m3dnow"},
+    {'min_version': 13, 'flags': "-m3dnowa"},                    # "3dnowext" enhanced 3DNow!
+    {'min_version': 13, 'flags': "-mprfchw"},                    # "prefetchw"
+    {'min_version': 13, 'flags': "-mprefetchwt1"},
+    {'min_version': 13, 'flags': "-mclflushopt"},
+    {'min_version': 13, 'flags': "-mxsaveopt"},
+    {'min_version': 13, 'flags': "-mxsavec"},
+    {'min_version': 13, 'flags': "-mxsaves"},
+    {'min_version': 13, 'flags': "-mclwb"},
+    {'min_version': 13, 'flags': "-mptwrite"},
+    {'min_version': 13, 'flags': "-mrdpid"},
+    {'min_version': 13, 'flags': "-msgx"},
+    {'min_version': 13, 'flags': "-mgfni"},
+    {'min_version': 13, 'flags': "-mvpclmulqdq"},
+    {'min_version': 13, 'flags': "-mpconfig"},
+    {'min_version': 13, 'flags': "-mwbnoinvd"},
+    {'min_version': 13, 'flags': "-mmovdiri"},
+    {'min_version': 13, 'flags': "-mmovdir64b"},
+    {'min_version': 13, 'flags': "-mlwp"},
+    {'min_version': 13, 'flags': "-mmwaitx"},
+    {'min_version': 13, 'flags': "-mclzero"},
+    None,                                                         # "invlpgb_tlbsync"         TODO(fernando): y este???? https://www.phoronix.com/news/AMD-Zen-3-Inst-Fixes-GCC11
+    {'min_version': 13, 'flags': "-mshstk"},                      # "cet_ss"
+    {'min_version': 13, 'flags': "-mavxvnni"},
+    {'min_version': 13, 'flags': "-mrtm"},                        # "tsxrtm"
+    None,                                                         # -mhle
+    {'min_version': 13, 'flags': "-mwaitpkg"},
+    {'min_version': 13, 'flags': "-menqcmd"},
+    {'min_version': 13, 'flags': "-muintr"},
+    {'min_version': 13, 'flags': "-mtsxldtrk"},
+    {'min_version': 13, 'flags': "-mcldemote"},
+    {'min_version': 13, 'flags': "-mserialize"},
+    {'min_version': 13, 'flags': "-mhreset"},
+    {'min_version': 13, 'flags': "-maes"},
+    {'min_version': 13, 'flags': "-mvaes"},
+    {'min_version': 13, 'flags': "-msha"},
+    {'min_version': 13, 'flags': "-mkl"},
+    {'min_version': 13, 'flags': "-mwidekl"},
+    None,                                                         # -mavx512fp16
+    {'min_version': 13, 'flags': "-mavx512pf"},
+    {'min_version': 13, 'flags': "-mavx512er"},
+    None,                                                         # -mavx5124vnniw
+    None,                                                         # -mavx5124fmaps
+    {'min_version': 13, 'flags': "-mavx512vbmi"},
+    {'min_version': 13, 'flags': "-mavx512ifma"},
+    {'min_version': 13, 'flags': "-mavx512vbmi2"},
+    {'min_version': 13, 'flags': "-mavx512vpopcntdq"},
+    {'min_version': 13, 'flags': "-mavx512bitalg"},
+    {'min_version': 13, 'flags': "-mavx512vnni"},
+    {'min_version': 13, 'flags': "-mavx512bf16"},
+    {'min_version': 13, 'flags': "-mavx512vp2intersect"},
+    {'min_version': 13, 'flags': "-mamx-bf16"},
+    {'min_version': 13, 'flags': "-mamx-tile"},
+    {'min_version': 13, 'flags': "-mamx-int8"},
+    None,                      # "mmxext"
+    None,                      # "xgetbv_ecx1"
+    None,                      # "umip"
+    None,                      # "sgx_lc"
+    None,                      # "mcommit"
+    None,                      # "rdpru"
+    None,                      # "invpcid"
+    None,                      # "sev_snp"
+]
+
+
 def get_available_extensions():
     data = []
     for f in extensions_map:
@@ -1499,9 +1774,14 @@ def filter_extensions(exts, os, comp, comp_ver):
     comp = adjust_compiler_name(os, comp)
 
     if comp not in extensions_flags:
+        print(f"Compiler {comp} not supported.")
         return [0] * len(exts)
 
     flags = extensions_flags[comp]
+
+    if flags is None:
+        print(f"Compiler {comp} not supported.")
+        return [0] * len(exts)
 
     res = []
     for i in range(MIN_EXTENSION):
@@ -1516,6 +1796,9 @@ def filter_extensions(exts, os, comp, comp_ver):
             res.append(0)
             continue
 
+        # print(flags[i]['min_version'])
+        # print(comp_ver)
+
         if flags[i]['min_version'] > comp_ver:
             res.append(0)
             continue
@@ -1526,7 +1809,16 @@ def filter_extensions(exts, os, comp, comp_ver):
 
 def get_compiler_flags(exts, os, comp, comp_ver):
     comp = adjust_compiler_name(os, comp)
+    # flags = extensions_flags[comp]
+    if comp not in extensions_flags:
+        print(f"Compiler {comp} not supported.")
+        return [0] * len(exts)
+
     flags = extensions_flags[comp]
+
+    if flags is None:
+        print(f"Compiler {comp} not supported.")
+        return [0] * len(exts)
 
     res = []
     for i in range(MIN_EXTENSION, len(flags)):
@@ -1605,8 +1897,13 @@ def get_all_data(os, comp, comp_ver):
 
 
 def several_tests(os, comp, comp_ver):
-    print(get_all_data(os, comp, comp_ver))
-#     # exts = all_exts_on()
+    # print(get_all_data(os, comp, comp_ver))
+
+    all_exts = all_exts_on()
+    comp_exts = filter_extensions(all_exts, os, comp, comp_ver)
+    flags = get_compiler_flags(comp_exts, os, comp, comp_ver)
+    print(flags)
+
 #     # exts = all_exts_off()
 #     level3_exts = level3_on()
 #     # print(level3_exts)
@@ -1654,25 +1951,34 @@ def several_tests(os, comp, comp_ver):
 #         print("Level3 compiler flags: ", level3_flags)
 
 
-def main():
-    # print(support_level1_features())
-    # print(support_level2_features())
-    # print(support_level3_features())
-    # print(support_level4_features())
+# def main():
+#     # print(support_level1_features())
+#     # print(support_level2_features())
+#     # print(support_level3_features())
+#     # print(support_level4_features())
 
-    os = 'Linux'
-    comp = 'gcc'
-    comp_ver = 12
-    several_tests(os, comp, comp_ver)
+#     # os = 'Linux'
+#     # comp = 'gcc'
+#     # comp_ver = 12
 
-    # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
-    # print(comp_flags2)
+#     os = 'Macos'
+#     comp = 'apple-clang'
+#     comp_ver = 13
 
-    # for i in range(len(filtered)):
-    #     print(filtered[i])
+#     # os = 'Linux'
+#     # comp = 'clang'
+#     # comp_ver = 6
 
-if __name__ == "__main__":
-    main()
+#     several_tests(os, comp, comp_ver)
+
+#     # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
+#     # print(comp_flags2)
+
+#     # for i in range(len(filtered)):
+#     #     print(filtered[i])
+
+# if __name__ == "__main__":
+#     main()
 
 
 
