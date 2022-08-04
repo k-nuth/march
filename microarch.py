@@ -62,7 +62,13 @@ def base58_flex_decode(enc, chrset=base58_charset):
     decoded = 0
 
     for e, c in enumerate(enc[::-1]):
-        decoded += ((basect**e) * chrset.index(c))
+        index = -1
+        try:
+            index = chrset.index(c)
+        except ValueError:
+            return None
+
+        decoded += ((basect**e) * index)
 
     return decoded
 
@@ -1575,6 +1581,8 @@ def encode_extensions(exts):
 def decode_extensions(architecture_id):
     architecture_id = str(architecture_id)
     exts_num = base58_flex_decode(architecture_id)
+    if exts_num is None:
+        return None
     res = "{0:b}".format(exts_num)
     res = res.zfill(KTH_EXTENSIONS_MAX)
     return _to_ints_bin(list(reversed(res)))
@@ -1841,12 +1849,17 @@ def get_compiler_flags(exts, os, comp, comp_ver):
 
 def get_compiler_flags_arch_id(arch_id, os, comp, comp_ver):
     exts = decode_extensions(arch_id)
+    if exts is None:
+        return None
     return get_compiler_flags(exts, os, comp, comp_ver)
 
 
 
 # -----------------------------------------------------------------
 
+def get_version_bits():
+    exts = list(map(lambda x : int(x) , KTH_MARCH_BUILD_VERSION_BITS))
+    return exts
 
 def all_exts_on():
     exts = list(map(lambda x : int(x) , KTH_MARCH_BUILD_VERSION_BITS))
@@ -1897,8 +1910,22 @@ def get_all_data(os, comp, comp_ver):
 
 def get_all_data_from_marchid(marchid, os, comp, comp_ver):
     user_exts = decode_extensions(marchid)
-    user_names = extensions_to_names(user_exts)
-    user_flags = get_compiler_flags(user_exts, os, comp, comp_ver)
+    user_names = None
+    user_flags = None
+    user_exts_filtered = None
+    user_marchid_valid = False
+    user_exts_compiler_compatible = None
+
+    if user_exts is not None:
+        version_bits = get_version_bits()
+        exts_version = user_exts[:len(version_bits)]
+
+        if version_bits == exts_version:
+            user_marchid_valid = True
+            user_names = extensions_to_names(user_exts)
+            user_flags = get_compiler_flags(user_exts, os, comp, comp_ver)
+            user_exts_filtered = filter_extensions(user_exts, os, comp, comp_ver)
+            user_exts_compiler_compatible = user_exts == user_exts_filtered
 
     cpu_exts = get_available_extensions()
     cpu_marchid = encode_extensions(cpu_exts)
@@ -1915,10 +1942,13 @@ def get_all_data_from_marchid(marchid, os, comp, comp_ver):
     level3_flags = get_compiler_flags(level3_exts, os, comp, comp_ver)
 
     return {
+        'user_marchid_valid': user_marchid_valid,
         'user_exts': user_exts,
+        'user_exts_filtered': user_exts_filtered,
         'user_marchid': marchid,
         'user_names': user_names,
         'user_flags': user_flags,
+        'user_exts_compiler_compatible': user_exts_compiler_compatible,
 
         'cpu_exts': cpu_exts,
         'cpu_marchid': cpu_marchid,
@@ -1936,12 +1966,30 @@ def get_all_data_from_marchid(marchid, os, comp, comp_ver):
     }
 
 def several_tests(os, comp, comp_ver):
-    # print(get_all_data(os, comp, comp_ver))
 
-    all_exts = all_exts_on()
-    comp_exts = filter_extensions(all_exts, os, comp, comp_ver)
-    flags = get_compiler_flags(comp_exts, os, comp, comp_ver)
-    print(flags)
+    print(get_all_data_from_marchid("iejnuMKAN3JLz5MqebbicdNwfuDjKd56u3XjRVqLvMvj", os, comp, comp_ver))
+    # print(get_all_data_from_marchid("ZLm9Pjh", os, comp, comp_ver))
+
+    # print(get_all_data(os, comp, comp_ver))
+    # version_bits = get_version_bits()
+    # print("version_bits: ", version_bits)
+
+
+    none_exts = all_exts_off()
+    none_marchid = encode_extensions(none_exts)
+    # all_exts = all_exts_on()
+    # all_marchid = encode_extensions(all_exts)
+    # all_names = extensions_to_names(all_exts)
+    # print("none_exts:    ", none_exts)
+    print("none_marchid: ", none_marchid)
+    # print("all_exts:     ", all_exts)
+    # print("all_marchid:  ", all_marchid)
+    # print("all_names:    ", all_names)
+
+    # all_exts = all_exts_on()
+    # comp_exts = filter_extensions(all_exts, os, comp, comp_ver)
+    # flags = get_compiler_flags(comp_exts, os, comp, comp_ver)
+    # print(flags)
 
 #     # exts = all_exts_off()
 #     level3_exts = level3_on()
@@ -1990,34 +2038,34 @@ def several_tests(os, comp, comp_ver):
 #         print("Level3 compiler flags: ", level3_flags)
 
 
-# def main():
-#     # print(support_level1_features())
-#     # print(support_level2_features())
-#     # print(support_level3_features())
-#     # print(support_level4_features())
+def main():
+    # print(support_level1_features())
+    # print(support_level2_features())
+    # print(support_level3_features())
+    # print(support_level4_features())
 
-#     # os = 'Linux'
-#     # comp = 'gcc'
-#     # comp_ver = 12
+    os = 'Linux'
+    comp = 'gcc'
+    comp_ver = 12
 
-#     os = 'Macos'
-#     comp = 'apple-clang'
-#     comp_ver = 13
+    # os = 'Macos'
+    # comp = 'apple-clang'
+    # comp_ver = 13
 
-#     # os = 'Linux'
-#     # comp = 'clang'
-#     # comp_ver = 6
+    # os = 'Linux'
+    # comp = 'clang'
+    # comp_ver = 6
 
-#     several_tests(os, comp, comp_ver)
+    several_tests(os, comp, comp_ver)
 
-#     # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
-#     # print(comp_flags2)
+    # comp_flags2 = get_compiler_flags_arch_id(archid, os, comp, comp_ver)
+    # print(comp_flags2)
 
-#     # for i in range(len(filtered)):
-#     #     print(filtered[i])
+    # for i in range(len(filtered)):
+    #     print(filtered[i])
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
 
 
