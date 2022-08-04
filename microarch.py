@@ -1895,6 +1895,45 @@ def get_all_data(os, comp, comp_ver):
         'level3_flags': level3_flags,
     }
 
+def get_all_data_from_marchid(marchid, os, comp, comp_ver):
+    user_exts = decode_extensions(marchid)
+    user_names = extensions_to_names(user_exts)
+    user_flags = get_compiler_flags(user_exts, os, comp, comp_ver)
+
+    cpu_exts = get_available_extensions()
+    cpu_marchid = encode_extensions(cpu_exts)
+    cpu_names = extensions_to_names(cpu_exts)
+
+    comp_exts = filter_extensions(cpu_exts, os, comp, comp_ver)
+    comp_marchid = encode_extensions(comp_exts)
+    comp_names = extensions_to_names(comp_exts)
+    comp_flags = get_compiler_flags(comp_exts, os, comp, comp_ver)
+
+    level3_exts = level3_on()
+    level3_marchid = encode_extensions(level3_exts)
+    level3_names = extensions_to_names(level3_exts)
+    level3_flags = get_compiler_flags(level3_exts, os, comp, comp_ver)
+
+    return {
+        'user_exts': user_exts,
+        'user_marchid': marchid,
+        'user_names': user_names,
+        'user_flags': user_flags,
+
+        'cpu_exts': cpu_exts,
+        'cpu_marchid': cpu_marchid,
+        'cpu_names': cpu_names,
+
+        'comp_exts': comp_exts,
+        'comp_marchid': comp_marchid,
+        'comp_names': comp_names,
+        'comp_flags': comp_flags,
+
+        'level3_exts': level3_exts,
+        'level3_marchid': level3_marchid,
+        'level3_names': level3_names,
+        'level3_flags': level3_flags,
+    }
 
 def several_tests(os, comp, comp_ver):
     # print(get_all_data(os, comp, comp_ver))
