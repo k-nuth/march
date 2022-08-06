@@ -888,14 +888,11 @@ extensions_map = [
     support_fma3_cpu,
     support_lzcnt,
     support_movbe,
-
-    # TODO(fernando): según el spec de Levels, acá tenemos que chequear OSXSAVE,
-    # pero nosotros solo podemos chequear XSAVE a nivel procesador
-    # el chequeo de soporte de features del sistema operativo lo debería hacer
-    # el nodo en runtime (o quizás no)
-
     # support_osxsave,
-    support_xsave_cpu,
+    support_xsave_cpu,              # TODO(fernando): según el spec de Levels, acá tenemos que chequear OSXSAVE,
+                                    # pero nosotros solo podemos chequear XSAVE a nivel procesador
+                                    # el chequeo de soporte de features del sistema operativo lo debería hacer
+                                    # el nodo en runtime (o quizás no)
 
     # Level 4 - x86-64-v4 ------------------------------------------------------------
     support_avx512f_cpu,
@@ -1877,6 +1874,24 @@ def level3_on():
     exts += [0] * (KTH_EXTENSIONS_MAX - len(exts))
     return exts
 
+def level2_on():
+    exts = list(map(lambda x : int(x) , KTH_MARCH_BUILD_VERSION_BITS))
+    exts += [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    exts += [0] * (KTH_EXTENSIONS_MAX - len(exts))
+    return exts
+
+def level1_on():
+    exts = list(map(lambda x : int(x) , KTH_MARCH_BUILD_VERSION_BITS))
+    exts += [1,1,1,1,1,1,1,1]
+    exts += [0] * (KTH_EXTENSIONS_MAX - len(exts))
+    return exts
+
+def level0_on():
+    exts = list(map(lambda x : int(x) , KTH_MARCH_BUILD_VERSION_BITS))
+    exts += [1]
+    exts += [0] * (KTH_EXTENSIONS_MAX - len(exts))
+    return exts
+
 def get_all_data(os, comp, comp_ver):
     cpu_exts = get_available_extensions()
     cpu_marchid = encode_extensions(cpu_exts)
@@ -1967,7 +1982,12 @@ def get_all_data_from_marchid(marchid, os, comp, comp_ver):
 
 def several_tests(os, comp, comp_ver):
 
-    print(get_all_data_from_marchid("iejnuMKAN3JLz5MqebbicdNwfuDjKd56u3XjRVqLvMvj", os, comp, comp_ver))
+    exts = level0_on()
+    marchid = encode_extensions(exts)
+    print(marchid)
+
+
+    # print(get_all_data_from_marchid("iejnuMKAN3JLz5MqebbicdNwfuDjKd56u3XjRVqLvMvj", os, comp, comp_ver))
     # print(get_all_data_from_marchid("ZLm9Pjh", os, comp, comp_ver))
 
     # print(get_all_data(os, comp, comp_ver))
@@ -1975,13 +1995,13 @@ def several_tests(os, comp, comp_ver):
     # print("version_bits: ", version_bits)
 
 
-    none_exts = all_exts_off()
-    none_marchid = encode_extensions(none_exts)
+    # none_exts = all_exts_off()
+    # none_marchid = encode_extensions(none_exts)
     # all_exts = all_exts_on()
     # all_marchid = encode_extensions(all_exts)
     # all_names = extensions_to_names(all_exts)
     # print("none_exts:    ", none_exts)
-    print("none_marchid: ", none_marchid)
+    # print("none_marchid: ", none_marchid)
     # print("all_exts:     ", all_exts)
     # print("all_marchid:  ", all_marchid)
     # print("all_names:    ", all_names)
