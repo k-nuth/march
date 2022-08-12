@@ -1537,6 +1537,143 @@ extensions_flags['apple-clang'] = [
     None,                      # "sev_snp"
 ]
 
+# https://docs.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
+extensions_flags['msvc'] = [
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+    None,                        # Version Bit 1
+    None,                        # Version Bit 0
+
+    # Level 0 (64 bits support)
+    # 16:
+    {'min_version': 16, 'flags': ["-m32", "-m64"]},
+
+    # Level 1 (baseline)
+    # 17:
+    {'min_version': 16, 'flags': ""},                        # "CMOV"        supported by no flags
+    {'min_version': 16, 'flags': ""},                        # "CX8"         supported by no flags
+    {'min_version': 16, 'flags': ""},                        # "FPU"         supported by no flags
+    {'min_version': 16, 'flags': ""},                        # fxsr
+    {'min_version': 16, 'flags': ""},                        # mmx
+    {'min_version': 16, 'flags': ""},                        # "SCE"         supported by no flags
+    {'min_version': 16, 'flags': ""},                        # sse
+    {'min_version': 16, 'flags': ""},                        # sse2
+
+    # Level 2 - x86-64-v2
+    {'min_version': 16, 'flags': ""},                        # cx16
+    {'min_version': 16, 'flags': ""},                        # sahf
+    {'min_version': 16, 'flags': ""},                        # popcnt
+    {'min_version': 16, 'flags': ""},                        # sse3
+    {'min_version': 16, 'flags': ""},                        # sse4.1
+    {'min_version': 16, 'flags': ""},                        # sse4.2
+    {'min_version': 16, 'flags': ""},                        # ssse3
+
+    # Level 3 - x86-64-v3
+    {'min_version': 16, 'flags': "/arch:AVX"},               # avx
+    {'min_version': 16, 'flags': "/arch:AVX2"},              # avx2
+    {'min_version': 16, 'flags': "/arch:AVX2"},              # bmi
+    {'min_version': 16, 'flags': ""},                        # bmi2
+    {'min_version': 16, 'flags': ""},                        # f16c
+    {'min_version': 16, 'flags': "/arch:AVX2"},              # fma
+    {'min_version': 16, 'flags': ""},                        # lzcnt and abm
+    {'min_version': 16, 'flags': ""},                        # movbe
+    {'min_version': 16, 'flags': ""},                        # xsave
+
+    # Level 4 - x86-64-v4
+    {'min_version': 16, 'flags': "/arch:AVX512"},            # avx512f                  Visual Studio 2017
+    {'min_version': 16, 'flags': "/arch:AVX512"},            # avx512bw                 Visual Studio 2017
+    {'min_version': 16, 'flags': "/arch:AVX512"},            # avx512cd                 Visual Studio 2017
+    {'min_version': 16, 'flags': "/arch:AVX512"},            # avx512dq                 Visual Studio 2017
+    {'min_version': 16, 'flags': "/arch:AVX512"},            # avx512vl                 Visual Studio 2017
+
+    # Other Features ------------------------------------------
+
+    None,                                                    # sse4a
+    None,                                                    # pku
+    None,                                                    # pclmul
+    None,                                                    # fsgsbase
+    None,                                                    # rdrnd
+    None,                                                    # fma4
+    None,                                                    # xop
+    None,                                                    # tbm
+    None,                                                    # rdseed
+    None,                                                    # adx
+    None,                                                    # 3dnow
+    None,                                                    # 3dnowa
+    None,                                                    # prfchw
+    None,                                                    # prefetchwt1
+    None,                                                    # clflushopt
+    None,                                                    # xsaveopt
+    None,                                                    # xsavec
+    None,                                                    # xsaves
+    None,                                                    # clwb
+    None,                                                    # ptwrite
+    None,                                                    # rdpid
+    None,                                                    # sgx
+    None,                                                    # gfni
+    None,                                                    # vpclmulqdq
+    None,                                                    # pconfig
+    None,                                                    # wbnoinvd
+    None,                                                    # movdiri
+    None,                                                    # movdir64b
+    None,                                                    # lwp
+    None,                                                    # mwaitx
+    None,                                                    # clzero
+    None,                                                    # invlpgb_tlbsync         TODO(fernando): y este???? https://www.phoronix.com/news/AMD-Zen-3-Inst-Fixes-GCC11
+    None,                                                    # shstk - cet_ss
+    None,                                                    # avxvnni
+    None,                                                    # rtm - tsxrtm
+    None,                                                    # hle - tsxhle
+    None,                                                    # waitpkg
+    None,                                                    # enqcmd
+    None,                                                    # uintr
+    None,                                                    # tsxldtrk
+    None,                                                    # cldemote
+    None,                                                    # serialize
+    None,                                                    # hreset
+    None,                                                    # aes
+    None,                                                    # vaes
+    None,                                                    # sha
+    None,                                                    # kl
+    None,                                                    # widekl
+    None,                                                    # avx512fp16
+    None,                                                    # avx512pf
+    None,                                                    # avx512er
+    None,                                                    # avx5124vnniw
+    None,                                                    # avx5124fmaps
+    None,                                                    # avx512vbmi
+    None,                                                    # avx512ifma
+    None,                                                    # avx512vbmi2
+    None,                                                    # avx512vpopcntdq
+    None,                                                    # avx512bitalg
+    None,                                                    # avx512vnni
+    None,                                                    # avx512bf16
+    None,                                                    # avx512vp2intersect
+    None,                                                    # amx-bf16
+    None,                                                    # amx-tile
+    None,                                                    # amx-int8
+    None,                                                    # mmxext
+    None,                                                    # xgetbv_ecx1
+    None,                                                    # umip
+    None,                                                    # sgx_lc
+    None,                                                    # mcommit
+    None,                                                    # rdpru
+    None,                                                    # invpcid
+    None,                                                    # sev_snp
+]
 
 def get_available_extensions():
     data = []
