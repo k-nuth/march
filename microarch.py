@@ -1559,7 +1559,7 @@ extensions_flags['msvc'] = [
 
     # Level 0 (64 bits support)
     # 16:
-    {'min_version': 16, 'flags': ["-m32", "-m64"]},
+    {'min_version': 16, 'flags': ""},
 
     # Level 1 (baseline)
     # 17:
