@@ -11,7 +11,7 @@ import os
 __title__ = "microarch"
 __summary__ = "Knuth Microarchitecture Management (CPUID)"
 __uri__ = "https://github.com/k-nuth/microarch"
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -19,7 +19,7 @@ __copyright__ = "Copyright (c) 2019-2023 Knuth Project"
 
 
 install_requires = [
-    "cpuid >= 0.0.9",
+    "cpuid >= 0.0.1",
 ]
 
 class PostInstallCommand(install):
