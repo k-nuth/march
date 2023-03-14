@@ -2228,6 +2228,7 @@ def get_all_data_from_marchid(marchid, os, comp, comp_ver):
     user_exts_filtered = None
     user_marchid_valid = False
     user_exts_compiler_compatible = None
+    user_kth_defs = None
 
     if user_exts is not None:
         version_bits = get_version_bits()
