@@ -1192,17 +1192,6 @@ extensions_names = [
     "PREFETCHI",
     "RAO-INT",
     "AMX-COMPLEX",
-
-
-
-support_avxifma_cpu
-support_avxvnniint8_cpu
-support_avxneconvert_cpu
-support_cmpccxadd_cpu
-support_amx_fp16_cpu
-support_prefetchi_cpu
-support_raoint_cpu
-support_amx_complex_cpu
 ]
 
 extensions_kth_defines = [
