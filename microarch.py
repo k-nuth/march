@@ -830,6 +830,67 @@ def support_amxint8_cpu():
     return (d & (1 << 25)) != 0
 
 # -----------------------------------------------------------------
+# Supported in GCC13
+# -----------------------------------------------------------------
+
+# Intel AVX-IFMA: AVX Integer Fused Multiply-Add Instructions
+# Packed Multiply of Unsigned 52-Bit Integers and Add the High 52-Bit Products to Qword Accumulators.
+# Introduced in Sierra Forest and Grand Ridge.
+def support_avxifma_cpu():
+    if max_function_id() < 0x00000007: return False
+    a, _, _, _ = cpuid.cpuid_count(0x00000007, 1)
+    return (a & (1 << 23)) != 0
+
+# Intel AVX-VNNI-INT8. AVX Vector Neural Network Instructions (VEX encoded).
+# Multiply and Add Unsigned and Signed Bytes With and Without Saturation
+# Introduced in Sierra Forest and Grand Ridge.
+def support_avxvnniint8_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 4)) != 0
+
+# Intel AVX-NE-CONVERT. Load BF16 Element and Convert to FP32 Element With Broadcast.
+# Introduced in Sierra Forest and Grand Ridge.
+def support_avxneconvert_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 5)) != 0
+
+# Intel CMPccXADD: Compare and Add if Condition is Met.
+# Introduced in Sierra Forest and Grand Ridge.
+def support_cmpccxadd_cpu():
+    if max_function_id() < 0x00000007: return False
+    a, _, _, _ = cpuid.cpuid_count(0x00000007, 1)
+    return (a & (1 << 7)) != 0
+
+# Intel AMX-FP16: Matrix multiply FP16 elements. Tile computational operations on FP16 numbers.
+# Introduced in  Granite Rapids.
+def support_amx_fp16_cpu():
+    if max_function_id() < 0x00000007: return False
+    a, _, _, _ = cpuid.cpuid_count(0x00000007, 1)
+    return (a & (1 << 21)) != 0
+
+# Intel prefetchi: Prefetch Code Into Caches
+def support_prefetchi_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 14)) != 0
+
+# Intel RAO-INT: New atomic instructions: AADD, AAND, AOR, AXOR.
+# Introduced in Grand Ridge.
+def support_raoint_cpu():
+    if max_function_id() < 0x00000007: return False
+    a, _, _, _ = cpuid.cpuid_count(0x00000007, 1)
+    return (a & (1 << 3)) != 0
+
+# Intel AMX-COMPLEX: Advanced Matrix Extensions for Complex numbers.
+# Introduced in Granite Rapids.
+def support_amx_complex_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 8)) != 0
+
+# -----------------------------------------------------------------
 
 def version_bit(i):
     global KTH_MARCH_BUILD_VERSION_BITS
@@ -974,6 +1035,15 @@ extensions_map = [
     support_rdpru,
     support_invpcid,
     support_sev_snp,
+
+    support_avxifma_cpu,
+    support_avxvnniint8_cpu,
+    support_avxneconvert_cpu,
+    support_cmpccxadd_cpu,
+    support_amx_fp16_cpu,
+    support_prefetchi_cpu,
+    support_raoint_cpu,
+    support_amx_complex_cpu,
 ]
 
 extensions_names = [
@@ -1113,6 +1183,26 @@ extensions_names = [
     "RDPRU",
     "INVPCID",
     "SEV_SNP",
+
+    "AVX-IFMA",
+    "AVX-VNNI-INT8",
+    "AVX-NE-CONVERT",
+    "CMPCCXADD",
+    "AMX-FP16",
+    "PREFETCHI",
+    "RAO-INT",
+    "AMX-COMPLEX",
+
+
+
+support_avxifma_cpu
+support_avxvnniint8_cpu
+support_avxneconvert_cpu
+support_cmpccxadd_cpu
+support_amx_fp16_cpu
+support_prefetchi_cpu
+support_raoint_cpu
+support_amx_complex_cpu
 ]
 
 extensions_kth_defines = [
@@ -1252,6 +1342,15 @@ extensions_kth_defines = [
     "-DKTH_EXT_RDPRU",
     "-DKTH_EXT_INVPCID",
     "-DKTH_EXT_SEV_SNP",
+
+    "-DKTH_EXT_AVX_IFMA",
+    "-DKTH_EXT_AVX_VNNI_INT8",
+    "-DKTH_EXT_AVX_NE_CONVERT",
+    "-DKTH_EXT_CMPCCXADD",
+    "-DKTH_EXT_AMX_FP16",
+    "-DKTH_EXT_PREFETCHI",
+    "-DKTH_EXT_RAO_INT",
+    "-DKTH_EXT_AMX_COMPLEX",
 ]
 
 
@@ -1401,6 +1500,15 @@ extensions_flags['gcc'] = [
     None,                      # "rdpru"
     None,                      # "invpcid"
     None,                      # "sev_snp"
+
+    {'min_version': 13, 'flags': "-mavxifma"},
+    {'min_version': 13, 'flags': "-mavxvnniint8"},
+    {'min_version': 13, 'flags': "-mavxneconvert"},
+    {'min_version': 13, 'flags': "-mcmpccxadd"},
+    {'min_version': 13, 'flags': "-mamx-fp16"},
+    {'min_version': 13, 'flags': "-mprefetchi"},
+    {'min_version': 13, 'flags': "-mraoint"},
+    {'min_version': 13, 'flags': "-mamx-complex"},
 ]
 
 extensions_flags['clang'] = [
@@ -1538,6 +1646,15 @@ extensions_flags['clang'] = [
     None,                      # "rdpru"
     None,                      # "invpcid"
     None,                      # "sev_snp"
+
+    None,                      # "-mavxifma"
+    None,                      # "-mavxvnniint8"
+    None,                      # "-mavxneconvert"
+    None,                      # "-mcmpccxadd"
+    None,                      # "-mamx-fp16"
+    None,                      # "-mprefetchi"
+    None,                      # "-mraoint"
+    None,                      # "-mamx-complex"
 ]
 
 extensions_flags['apple-clang'] = [
@@ -1675,6 +1792,15 @@ extensions_flags['apple-clang'] = [
     None,                      # "rdpru"
     None,                      # "invpcid"
     None,                      # "sev_snp"
+
+    None,                      # "-mavxifma"
+    None,                      # "-mavxvnniint8"
+    None,                      # "-mavxneconvert"
+    None,                      # "-mcmpccxadd"
+    None,                      # "-mamx-fp16"
+    None,                      # "-mprefetchi"
+    None,                      # "-mraoint"
+    None,                      # "-mamx-complex"
 ]
 
 # https://docs.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
@@ -1813,6 +1939,15 @@ extensions_flags['msvc'] = [
     None,                                                    # rdpru
     None,                                                    # invpcid
     None,                                                    # sev_snp
+
+    None,                                                    # "-mavxifma"
+    None,                                                    # "-mavxvnniint8"
+    None,                                                    # "-mavxneconvert"
+    None,                                                    # "-mcmpccxadd"
+    None,                                                    # "-mamx-fp16"
+    None,                                                    # "-mprefetchi"
+    None,                                                    # "-mraoint"
+    None,                                                    # "-mamx-complex"
 ]
 
 def get_available_extensions():
@@ -2457,6 +2592,7 @@ if __name__ == "__main__":
 # https://gcc.gnu.org/onlinedocs/gcc-10.4.0/gcc/x86-Options.html#x86-Options
 # https://gcc.gnu.org/onlinedocs/gcc-11.3.0/gcc/x86-Options.html#x86-Options
 # https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-13.1.0/gcc/x86-Options.html
 
 # ------------------------------------------------------------------------------------------------
 
