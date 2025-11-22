@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2019-2023 Knuth Project
+# Copyright (c) 2019-2025 Knuth Project
 #
 
 from setuptools import setup
@@ -11,15 +11,15 @@ import os
 __title__ = "microarch"
 __summary__ = "Knuth Microarchitecture Management (CPUID)"
 __uri__ = "https://github.com/k-nuth/microarch"
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
-__copyright__ = "Copyright (c) 2019-2023 Knuth Project"
+__copyright__ = "Copyright (c) 2019-2025 Knuth Project"
 
 
 install_requires = [
-    "cpuid >= 0.0.1",
+    "cpuid >= 0.1.1",
 ]
 
 class PostInstallCommand(install):
@@ -28,12 +28,16 @@ class PostInstallCommand(install):
     def run(self):
         install.run(self)
 
+# Read README for long description
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
     name = __title__,
     version = __version__,
     description = __summary__,
-    long_description=open("./README.rst").read(),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     license = __license__,
     url = __uri__,
     author = __author__,
@@ -66,6 +70,9 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
 

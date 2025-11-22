@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2019-2023 Knuth Project
+# Copyright (c) 2019-2025 Knuth Project
 #
 
 from enum import Enum
