@@ -890,6 +890,112 @@ def support_amx_complex_cpu():
     _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
     return (d & (1 << 8)) != 0
 
+# GCC 14 extensions --------------------------------------------------------
+
+# Intel AVXVNNIINT16: AVX-VNNI-INT16 instructions.
+# CPUID.(EAX=07H, ECX=01H):EDX[10]
+def support_avxvnniint16_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 10)) != 0
+
+# Intel AVX10: AVX10 Converged Vector ISA support.
+# CPUID.(EAX=07H, ECX=01H):EDX[19]
+def support_avx10_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 19)) != 0
+
+# Intel AVX10.1-256: AVX10 256-bit vector support.
+# CPUID.(EAX=24H, ECX=00H):EBX[17]
+def support_avx10_256_cpu():
+    if max_function_id() < 0x00000024: return False
+    if not support_avx10_cpu(): return False
+    _, b, _, _ = cpuid.cpuid_count(0x00000024, 0)
+    return (b & (1 << 17)) != 0
+
+# Intel AVX10.1-512: AVX10 512-bit vector support.
+# CPUID.(EAX=24H, ECX=00H):EBX[18]
+def support_avx10_512_cpu():
+    if max_function_id() < 0x00000024: return False
+    if not support_avx10_cpu(): return False
+    _, b, _, _ = cpuid.cpuid_count(0x00000024, 0)
+    return (b & (1 << 18)) != 0
+
+# SHA512: SHA-512 instructions.
+# Note: Not yet defined in standard CPUID specification as of GCC 14
+def support_sha512_cpu():
+    # TODO(fernando): SHA512 detection not yet standardized
+    return False
+
+# SM3: SM3 hash algorithm instructions.
+# CPUID.(EAX=07H, ECX=01H):EAX[1]
+def support_sm3_cpu():
+    if max_function_id() < 0x00000007: return False
+    a, _, _, _ = cpuid.cpuid_count(0x00000007, 1)
+    return (a & (1 << 1)) != 0
+
+# SM4: SM4 cipher algorithm instructions.
+# CPUID.(EAX=07H, ECX=01H):EAX[2]
+def support_sm4_cpu():
+    if max_function_id() < 0x00000007: return False
+    a, _, _, _ = cpuid.cpuid_count(0x00000007, 1)
+    return (a & (1 << 2)) != 0
+
+# Intel APX: Advanced Performance Extensions Foundation.
+# CPUID.(EAX=07H, ECX=01H):EDX[21]
+def support_apxf_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 21)) != 0
+
+# USERMSR: User-Mode MSR access instructions.
+# Note: Not yet defined in standard CPUID specification as of GCC 14
+def support_usermsr_cpu():
+    # TODO(fernando): USERMSR detection not yet standardized
+    return False
+
+# GCC 15 extensions --------------------------------------------------------
+
+# Intel AMX-FP8: Tile operations on FP8 numbers.
+# CPUID.(EAX=07H, ECX=00H):ECX[3]
+def support_amxfp8_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
+    return (c & (1 << 3)) != 0
+
+# Intel AMX-TF32: Tile operations on TensorFloat-32 numbers.
+# CPUID.(EAX=07H, ECX=01H):EDX[7]
+def support_amxtf32_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 7)) != 0
+
+# Intel AMX-TRANSPOSE: Tile transpose operations.
+# CPUID.(EAX=07H, ECX=01H):EDX[6]
+def support_amxtranspose_cpu():
+    if max_function_id() < 0x00000007: return False
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 1)
+    return (d & (1 << 6)) != 0
+
+# Intel AVX10.2: AVX10 version 2.
+# Note: Not yet defined in standard CPUID specification as of GCC 15
+def support_avx10_2_cpu():
+    # TODO(fernando): AVX10.2 detection not yet standardized
+    return False
+
+# Intel AMX-AVX512: AMX with AVX-512 integration.
+# Note: Not yet defined in standard CPUID specification as of GCC 15
+def support_amxavx512_cpu():
+    # TODO(fernando): AMX-AVX512 detection not yet standardized
+    return False
+
+# Intel AMX-MOVRS: AMX move with register source.
+# Note: Not yet defined in standard CPUID specification as of GCC 15
+def support_amxmovrs_cpu():
+    # TODO(fernando): AMX-MOVRS detection not yet standardized
+    return False
+
 # -----------------------------------------------------------------
 
 def version_bit(i):
@@ -1044,6 +1150,25 @@ extensions_map = [
     support_prefetchi_cpu,
     support_raoint_cpu,
     support_amx_complex_cpu,
+
+    # GCC 14 extensions
+    support_avxvnniint16_cpu,
+    support_avx10_cpu,
+    support_avx10_256_cpu,
+    support_avx10_512_cpu,
+    support_sha512_cpu,
+    support_sm3_cpu,
+    support_sm4_cpu,
+    support_apxf_cpu,
+    support_usermsr_cpu,
+
+    # GCC 15 extensions
+    support_avx10_2_cpu,
+    support_amxfp8_cpu,
+    support_amxtf32_cpu,
+    support_amxtranspose_cpu,
+    support_amxavx512_cpu,
+    support_amxmovrs_cpu,
 ]
 
 extensions_names = [
@@ -1192,6 +1317,25 @@ extensions_names = [
     "PREFETCHI",
     "RAO-INT",
     "AMX-COMPLEX",
+
+    # GCC 14 extensions
+    "AVX-VNNI-INT16",
+    "AVX10",
+    "AVX10.1-256",
+    "AVX10.1-512",
+    "SHA512",
+    "SM3",
+    "SM4",
+    "APX_F",
+    "USERMSR",
+
+    # GCC 15 extensions
+    "AVX10.2",
+    "AMX-FP8",
+    "AMX-TF32",
+    "AMX-TRANSPOSE",
+    "AMX-AVX512",
+    "AMX-MOVRS",
 ]
 
 extensions_kth_defines = [
@@ -1340,6 +1484,25 @@ extensions_kth_defines = [
     "-DKTH_EXT_PREFETCHI",
     "-DKTH_EXT_RAO_INT",
     "-DKTH_EXT_AMX_COMPLEX",
+
+    # GCC 14 extensions
+    "-DKTH_EXT_AVX_VNNI_INT16",
+    "-DKTH_EXT_AVX10",
+    "-DKTH_EXT_AVX10_1_256",
+    "-DKTH_EXT_AVX10_1_512",
+    "-DKTH_EXT_SHA512",
+    "-DKTH_EXT_SM3",
+    "-DKTH_EXT_SM4",
+    "-DKTH_EXT_APX_F",
+    "-DKTH_EXT_USERMSR",
+
+    # GCC 15 extensions
+    "-DKTH_EXT_AVX10_2",
+    "-DKTH_EXT_AMX_FP8",
+    "-DKTH_EXT_AMX_TF32",
+    "-DKTH_EXT_AMX_TRANSPOSE",
+    "-DKTH_EXT_AMX_AVX512",
+    "-DKTH_EXT_AMX_MOVRS",
 ]
 
 
@@ -1498,6 +1661,25 @@ extensions_flags['gcc'] = [
     {'min_version': 13, 'flags': "-mprefetchi"},
     {'min_version': 13, 'flags': "-mraoint"},
     {'min_version': 13, 'flags': "-mamx-complex"},
+
+    # GCC 14 extensions
+    {'min_version': 14, 'flags': "-mavxvnniint16"},
+    {'min_version': 14, 'flags': "-mavx10.1"},
+    {'min_version': 14, 'flags': "-mavx10.1-256"},
+    {'min_version': 14, 'flags': "-mavx10.1-512"},
+    {'min_version': 14, 'flags': "-msha512"},
+    {'min_version': 14, 'flags': "-msm3"},
+    {'min_version': 14, 'flags': "-msm4"},
+    {'min_version': 14, 'flags': "-mapxf"},
+    {'min_version': 14, 'flags': "-musermsr"},
+
+    # GCC 15 extensions
+    {'min_version': 15, 'flags': "-mavx10.2"},
+    {'min_version': 15, 'flags': "-mamx-fp8"},
+    {'min_version': 15, 'flags': "-mamx-tf32"},
+    {'min_version': 15, 'flags': "-mamx-transpose"},
+    {'min_version': 15, 'flags': "-mamx-avx512"},
+    {'min_version': 15, 'flags': "-mamx-movrs"},
 ]
 
 extensions_flags['clang'] = [
@@ -1632,18 +1814,37 @@ extensions_flags['clang'] = [
     None,                      # "umip"
     None,                      # "sgx_lc"
     None,                      # "mcommit"
-    None,                      # "rdpru"
-    None,                      # "invpcid"
+    {'min_version': 15, 'flags': "-mrdpru"},
+    {'min_version': 13, 'flags': "-minvpcid"},
     None,                      # "sev_snp"
 
-    None,                      # "-mavxifma"
-    None,                      # "-mavxvnniint8"
-    None,                      # "-mavxneconvert"
-    None,                      # "-mcmpccxadd"
-    None,                      # "-mamx-fp16"
-    None,                      # "-mprefetchi"
-    None,                      # "-mraoint"
-    None,                      # "-mamx-complex"
+    {'min_version': 16, 'flags': "-mavxifma"},
+    {'min_version': 16, 'flags': "-mavxvnniint8"},
+    {'min_version': 16, 'flags': "-mavxneconvert"},
+    {'min_version': 16, 'flags': "-mcmpccxadd"},
+    {'min_version': 16, 'flags': "-mamx-fp16"},
+    {'min_version': 16, 'flags': "-mprefetchi"},
+    {'min_version': 16, 'flags': "-mraoint"},
+    {'min_version': 17, 'flags': "-mamx-complex"},
+
+    # Clang 17-18 extensions (from GCC 14)
+    {'min_version': 17, 'flags': "-mavxvnniint16"},
+    {'min_version': 18, 'flags': "-mavx10.1"},
+    {'min_version': 18, 'flags': "-mavx10.1-256"},
+    {'min_version': 18, 'flags': "-mavx10.1-512"},
+    {'min_version': 17, 'flags': "-msha512"},
+    {'min_version': 17, 'flags': "-msm3"},
+    {'min_version': 17, 'flags': "-msm4"},
+    {'min_version': 18, 'flags': "-mapxf"},
+    {'min_version': 18, 'flags': "-musermsr"},
+
+    # Clang 20 extensions (from GCC 15)
+    {'min_version': 20, 'flags': "-mavx10.2"},
+    {'min_version': 20, 'flags': "-mamx-fp8"},
+    {'min_version': 20, 'flags': "-mamx-tf32"},
+    {'min_version': 20, 'flags': "-mamx-transpose"},
+    {'min_version': 20, 'flags': "-mamx-avx512"},
+    {'min_version': 20, 'flags': "-mamx-movrs"},
 ]
 
 extensions_flags['apple-clang'] = [
@@ -1778,18 +1979,38 @@ extensions_flags['apple-clang'] = [
     None,                      # "umip"
     None,                      # "sgx_lc"
     None,                      # "mcommit"
-    None,                      # "rdpru"
-    None,                      # "invpcid"
+    None,                      # "rdpru" - AMD-specific, not in Apple Clang
+    {'min_version': 13, 'flags': "-minvpcid"},
     None,                      # "sev_snp"
 
-    None,                      # "-mavxifma"
-    None,                      # "-mavxvnniint8"
-    None,                      # "-mavxneconvert"
-    None,                      # "-mcmpccxadd"
-    None,                      # "-mamx-fp16"
-    None,                      # "-mprefetchi"
-    None,                      # "-mraoint"
-    None,                      # "-mamx-complex"
+    {'min_version': 16, 'flags': "-mavxifma"},
+    {'min_version': 16, 'flags': "-mavxvnniint8"},
+    {'min_version': 16, 'flags': "-mavxneconvert"},
+    {'min_version': 16, 'flags': "-mcmpccxadd"},
+    {'min_version': 16, 'flags': "-mamx-fp16"},
+    {'min_version': 16, 'flags': "-mprefetchi"},
+    {'min_version': 16, 'flags': "-mraoint"},
+    {'min_version': 17, 'flags': "-mamx-complex"},
+
+    # Apple Clang extensions (from GCC 14) - matching LLVM Clang 17-18
+    {'min_version': 17, 'flags': "-mavxvnniint16"},
+    {'min_version': 18, 'flags': "-mavx10.1"},
+    {'min_version': 18, 'flags': "-mavx10.1-256"},
+    {'min_version': 18, 'flags': "-mavx10.1-512"},
+    {'min_version': 17, 'flags': "-msha512"},
+    {'min_version': 17, 'flags': "-msm3"},
+    {'min_version': 17, 'flags': "-msm4"},
+    {'min_version': 18, 'flags': "-mapxf"},
+    {'min_version': 18, 'flags': "-musermsr"},
+
+    # Apple Clang extensions (from GCC 15) - Not yet in Apple Clang
+    {'min_version': 20, 'flags': "-mavx10.2"},
+    {'min_version': 20, 'flags': "-mamx-fp8"},
+    {'min_version': 20, 'flags': "-mamx-tf32"},
+    {'min_version': 20, 'flags': "-mamx-transpose"},
+    {'min_version': 20, 'flags': "-mamx-avx512"},
+    {'min_version': 20, 'flags': "-mamx-movrs"},
+
 ]
 
 # https://docs.microsoft.com/en-us/cpp/build/reference/arch-x64?view=msvc-170
@@ -1937,6 +2158,25 @@ extensions_flags['msvc'] = [
     None,                                                    # "-mprefetchi"
     None,                                                    # "-mraoint"
     None,                                                    # "-mamx-complex"
+
+    # MSVC extensions (from GCC 14) - Not yet supported in MSVC
+    None,                                                    # "-mavxvnniint16"
+    None,                                                    # "-mavx10.1"
+    None,                                                    # "-mavx10.1-256"
+    None,                                                    # "-mavx10.1-512"
+    None,                                                    # "-msha512"
+    None,                                                    # "-msm3"
+    None,                                                    # "-msm4"
+    None,                                                    # "-mapxf"
+    None,                                                    # "-musermsr"
+
+    # MSVC extensions (from GCC 15) - Not yet supported in MSVC
+    None,                                                    # "-mavx10.2"
+    None,                                                    # "-mamx-fp8"
+    None,                                                    # "-mamx-tf32"
+    None,                                                    # "-mamx-transpose"
+    None,                                                    # "-mamx-avx512"
+    None,                                                    # "-mamx-movrs"
 ]
 
 def get_available_extensions():
@@ -2582,6 +2822,18 @@ if __name__ == "__main__":
 # https://gcc.gnu.org/onlinedocs/gcc-11.3.0/gcc/x86-Options.html#x86-Options
 # https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/x86-Options.html#x86-Options
 # https://gcc.gnu.org/onlinedocs/gcc-13.1.0/gcc/x86-Options.html
+# https://gcc.gnu.org/onlinedocs/gcc-14.3.0/gcc/x86-Options.html
+# https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/x86-Options.html
+
+# Clang/LLVM Documentation
+# https://releases.llvm.org/13.0.0/tools/clang/docs/ClangCommandLineReference.html
+# https://releases.llvm.org/14.0.0/tools/clang/docs/ClangCommandLineReference.html
+# https://releases.llvm.org/15.0.0/tools/clang/docs/ClangCommandLineReference.html
+# https://releases.llvm.org/16.0.0/tools/clang/docs/ClangCommandLineReference.html
+# https://releases.llvm.org/17.0.1/tools/clang/docs/ClangCommandLineReference.html
+# https://releases.llvm.org/18.1.8/tools/clang/docs/ClangCommandLineReference.html
+# https://releases.llvm.org/19.1.0/tools/clang/docs/ClangCommandLineReference.html
+# https://releases.llvm.org/20.1.0/tools/clang/docs/ClangCommandLineReference.html
 
 # ------------------------------------------------------------------------------------------------
 
